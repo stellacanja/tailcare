@@ -10,7 +10,7 @@ const confirmPassword = ref('')
 </script>
 
 <template>
-  <v-responsive class="border rounded">
+  <v-responsive class="">
     <v-app>
       <!-- Centered App Bar Logo -->
       <v-app-bar class="navbar" flat height="150" style="background-color: #f4f5f7">
@@ -68,18 +68,6 @@ const confirmPassword = ref('')
                 <h4 style="color: #8c52ff; font-style: italic">
                   Already have an existing account?
                   <RouterLink to="/" style="color: skyblue; font-style: normal">Log In</RouterLink>
-                </h4>
-              </div>
-
-              <div class="mt-2">
-                <h4>
-                  <RouterLink
-                    to=""
-                    style="color: skyblue; font-style: normal"
-                    class="d-flex justify-end"
-                  >
-                    Forgot your password?
-                  </RouterLink>
                 </h4>
               </div>
             </v-col>

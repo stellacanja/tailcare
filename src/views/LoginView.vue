@@ -8,7 +8,7 @@ const password = ref('')
 </script>
 
 <template>
-  <v-responsive class="border rounded">
+  <v-responsive class="">
     <v-app>
       <!-- Centered App Bar Logo -->
       <v-app-bar class="navbar" flat height="150" style="background-color: #f4f5f7">
@@ -58,6 +58,17 @@ const password = ref('')
                   Don't have an account?
                   <RouterLink to="/sign" style="color: skyblue; font-style: normal">
                     Sign Up
+                  </RouterLink>
+                </h4>
+              </div>
+              <div class="mt-2">
+                <h4>
+                  <RouterLink
+                    to=""
+                    style="color: skyblue; font-style: normal"
+                    class="d-flex justify-end"
+                  >
+                    Forgot your password?
                   </RouterLink>
                 </h4>
               </div>
