@@ -2,6 +2,11 @@
 import { ref } from 'vue'
 import imgSix from '@/assets/images/six.png'
 import imgWel from '@/assets/images/welcome.png'
+
+const username = ref('')
+const email = ref('')
+const password = ref('')
+const confirmPassword = ref('')
 </script>
 
 <template>
@@ -16,46 +21,84 @@ import imgWel from '@/assets/images/welcome.png'
         </v-container>
       </v-app-bar>
 
-      <br />
-      <br />
-
       <v-main>
         <v-container>
-          <v-row>
-            <v-col cols="5" md="5">
-              <br />
-              <br />
+          <v-row class="align-center">
+            <!-- Registration Form -->
+            <v-col cols="12" md="5" class="mt-8">
               <v-card class="pa-4">
-                <h1 id="welc" style="color: #8c52ff"><b>WELCOME OWNERS</b></h1>
-                <br />
+                <h1 id="welc" style="color: #8c52ff" class="d-flex justify-center">
+                  <b>REGISTER NOW</b>
+                </h1>
+                <p class="d-flex justify-center" style="margin: 2%; color: skyblue">
+                  Create account to get started
+                </p>
                 <v-form fast-fail @submit.prevent>
-                  <v-text-field label="Email address"></v-text-field>
-
-                  <v-text-field label="Password"></v-text-field>
-
-                  <v-btn class="mt-2" type="submit" style="background-color: skyblue" block
-                    >Submit</v-btn
-                  >
+                  <v-text-field
+                    v-model="username"
+                    variant="solo-inverted"
+                    label="Username"
+                    type="text"
+                  />
+                  <v-text-field
+                    v-model="email"
+                    variant="solo-inverted"
+                    label="Email address"
+                    type="email"
+                  />
+                  <v-text-field
+                    v-model="password"
+                    variant="solo-inverted"
+                    label="Create Password"
+                    type="password"
+                  />
+                  <v-text-field
+                    v-model="confirmPassword"
+                    variant="solo-inverted"
+                    label="Confirm Password"
+                    type="password"
+                  />
+                  <v-btn class="mt-2" type="submit" style="background-color: skyblue" block>
+                    Sign Up
+                  </v-btn>
                 </v-form>
               </v-card>
-              <br />
-              <h3>Don't have an account? <link rel="" href="" />Sign up</h3>
+
+              <div class="mt-4">
+                <h4 style="color: #8c52ff; font-style: italic">
+                  Already have an existing account?
+                  <RouterLink to="/" style="color: skyblue; font-style: normal">Log In</RouterLink>
+                </h4>
+              </div>
+
+              <div class="mt-2">
+                <h4>
+                  <RouterLink
+                    to=""
+                    style="color: skyblue; font-style: normal"
+                    class="d-flex justify-end"
+                  >
+                    Forgot your password?
+                  </RouterLink>
+                </h4>
+              </div>
             </v-col>
-            <v-col cols="7" md="7">
+
+            <!-- Image Section -->
+            <v-col cols="12" md="7" class="d-flex justify-center mt-6 mt-md-0">
               <img
                 :src="imgSix"
-                alt="Four Pets"
-                class="card-img-top"
-                style="height: 500px; object-fit: cover; width: 800px"
+                alt="Pets"
+                style="max-width: 100%; height: auto; object-fit: cover; border-radius: 8px"
               />
             </v-col>
           </v-row>
         </v-container>
       </v-main>
 
-      <v-footer border app id="foot" class="justify-center" style="background-color: #f4f5f7"
-        >TailCare@2025</v-footer
-      >
+      <v-footer border app id="foot" class="justify-center" style="background-color: #f4f5f7">
+        TailCare@2025
+      </v-footer>
     </v-app>
   </v-responsive>
 </template>

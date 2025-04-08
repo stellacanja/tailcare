@@ -48,7 +48,7 @@ const password = ref('')
                     style="background-color: skyblue"
                     block
                   >
-                    Submit
+                    Log in
                   </v-btn>
                 </v-form>
               </v-card>
