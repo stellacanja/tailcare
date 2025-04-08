@@ -2,6 +2,9 @@
 import { ref } from 'vue'
 import imgFour from '@/assets/images/four.png'
 import imgWel from '@/assets/images/welcome.png'
+
+const email = ref('')
+const password = ref('')
 </script>
 
 <template>
@@ -16,46 +19,65 @@ import imgWel from '@/assets/images/welcome.png'
         </v-container>
       </v-app-bar>
 
-      <br />
-      <br />
-
       <v-main>
         <v-container>
-          <v-row>
-            <v-col cols="5" md="5">
-              <br />
-              <br />
-              <v-card class="pa-4">
-                <h1 id="welc" style="color: #8c52ff"><b>WELCOME OWNERS</b></h1>
-                <br />
+          <v-row class="align-center">
+            <!-- Login Form -->
+            <v-col cols="12" md="5">
+              <v-card class="pa-4 mt-8">
+                <h1 id="welc" style="color: #8c52ff" class="d-flex justify-center">
+                  <b>WELCOME OWNERS</b>
+                </h1>
                 <v-form fast-fail @submit.prevent>
-                  <v-text-field label="Email address"></v-text-field>
-
-                  <v-text-field label="Password"></v-text-field>
-
-                  <v-btn class="mt-2" type="submit" style="background-color: skyblue" block
-                    >Submit</v-btn
+                  <v-text-field
+                    label="Email address"
+                    type="email"
+                    variant="solo-inverted"
+                    v-model="email"
+                  />
+                  <v-text-field
+                    label="Password"
+                    type="password"
+                    variant="solo-inverted"
+                    v-model="password"
+                  />
+                  <v-btn
+                    variant="tonal"
+                    class="mt-2"
+                    type="submit"
+                    style="background-color: skyblue"
+                    block
                   >
+                    Submit
+                  </v-btn>
                 </v-form>
               </v-card>
-              <br />
-              <h3>Don't have an account? <link rel="" href="/sign" />Sign up</h3>
+
+              <div class="mt-4">
+                <h4 style="font-style: italic; color: #8c52ff">
+                  Don't have an account?
+                  <RouterLink to="/sign" style="color: skyblue; font-style: normal">
+                    Sign Up
+                  </RouterLink>
+                </h4>
+              </div>
             </v-col>
-            <v-col cols="7" md="7">
+
+            <!-- Image Column -->
+            <v-col cols="12" md="7" class="d-flex justify-center mt-6 mt-md-0">
               <img
                 :src="imgFour"
                 alt="Four Pets"
-                class="card-img-top"
-                style="height: 500px; object-fit: cover; width: 800px"
+                style="max-width: 100%; height: auto; object-fit: cover; border-radius: 8px"
               />
             </v-col>
           </v-row>
         </v-container>
       </v-main>
 
-      <v-footer border app id="foot" class="justify-center" style="background-color: #f4f5f7"
-        >TailCare@2025</v-footer
-      >
+      <v-footer border app id="foot" class="justify-center" style="background-color: #f4f5f7">
+        TailCare@2025
+      </v-footer>
     </v-app>
   </v-responsive>
 </template>

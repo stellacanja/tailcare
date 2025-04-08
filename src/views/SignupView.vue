@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import imgFour from '@/assets/images/four.png'
+import imgSix from '@/assets/images/six.png'
 import imgWel from '@/assets/images/welcome.png'
 </script>
 
@@ -43,7 +43,7 @@ import imgWel from '@/assets/images/welcome.png'
             </v-col>
             <v-col cols="7" md="7">
               <img
-                :src="imgFour"
+                :src="imgSix"
                 alt="Four Pets"
                 class="card-img-top"
                 style="height: 500px; object-fit: cover; width: 800px"
