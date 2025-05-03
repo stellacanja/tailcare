@@ -1,4 +1,10 @@
 <script setup>
+import {
+  requiredValidator,
+  emailValidator,
+  passwordValidator,
+  confirmedValidator
+} from '@/utils/validators'
 import { ref } from 'vue'
 import imgSix from '@/assets/images/six.png'
 import imgWel from '@/assets/images/welcome.png'
@@ -7,6 +13,29 @@ const username = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+
+const formDataDefault = {
+  username: '',
+  email: '',
+  password:'',
+  confirmPassword:''
+}
+
+const formData = ref({
+  ...formDataDefault
+})
+
+const refVForm = ref()
+
+const onSubmit = () => {
+  alert(formData.value.password)
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
+}
 </script>
 
 <template>
@@ -33,30 +62,34 @@ const confirmPassword = ref('')
                 <p class="d-flex justify-center" style="margin: 2%; color: skyblue">
                   Create account to get started
                 </p>
-                <v-form fast-fail @submit.prevent>
+                <v-form ref="refVForm" @submit.prevent="onFormSubmit">
                   <v-text-field
-                    v-model="username"
+                    v-model="formData.username"
                     variant="solo-inverted"
                     label="Username"
                     type="text"
+                    :rules="[requiredValidator]"
                   />
                   <v-text-field
-                    v-model="email"
+                    v-model="formData.email"
                     variant="solo-inverted"
                     label="Email address"
                     type="email"
+                    :rules="[requiredValidator, emailValidator]"
                   />
                   <v-text-field
-                    v-model="password"
+                    v-model="formData.password"
                     variant="solo-inverted"
                     label="Create Password"
                     type="password"
+                    :rules="[requiredValidator, passwordValidator]"
                   />
                   <v-text-field
-                    v-model="confirmPassword"
+                    v-model="formData.confirmPassword"
                     variant="solo-inverted"
                     label="Confirm Password"
                     type="password"
+                    :rules="[requiredValidator, confirmedValidator(formData.confirmPassword, formData.password)]"
                   />
                   <v-btn class="mt-2" type="submit" style="background-color: skyblue" block>
                     Sign Up
