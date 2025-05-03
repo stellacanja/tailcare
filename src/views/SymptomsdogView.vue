@@ -1,48 +1,52 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { useTheme } from 'vuetify'
-import { useRouter } from 'vue-router'
-
-import imgType from '@/assets/images/type.gif'
+import { ref, watchEffect } from 'vue'
 import imgWel from '@/assets/images/welcome.png'
-import imgMenu from '@/assets/images/menu.png'
+import imgCatt from '@/assets/images/catt.gif'
+import imgType from '@/assets/images/type.gif'
 
-// Setup
-const menu = ref(false)
-const darkMode = ref(false)
-const theme = useTheme()
-const router = useRouter()
+// Theme setup
+const theme = ref('light')
+const consultOpen = ref(false)
+const typeOpen = ref(false)
+const currentTime = ref(new Date().toLocaleString())
 
-// Navbar themes
 const themes = {
-  light: {
-    '--navbar-bg': '#f4f5f7',
-  },
-  dark: {
-    '--navbar-bg': '#210635',
-  },
-  custom: {
-    '--navbar-bg': '#42od4b',
-  },
+  light: { '--second-column-bg': '#f5d5e0' },
+  dark: { '--second-column-bg': '#210635' },
+  custom: { '--second-column-bg': '#74b0ff' },
 }
 
-// Theme watcher
-watch(darkMode, (val) => {
-  theme.global.name.value = val ? 'dark' : 'light'
-})
-
-// Change theme
 function changeTheme() {
-  theme.global.name.value = theme.global.name.value === 'light' ? 'dark' : 'light'
-  const selectedTheme = themes[theme.global.name.value]
+  theme.value = theme.value === 'light' ? 'dark' : theme.value === 'dark' ? 'custom' : 'light'
+}
+
+watchEffect(() => {
+  const selectedTheme = themes[theme.value]
   Object.keys(selectedTheme).forEach((key) => {
     document.documentElement.style.setProperty(key, selectedTheme[key])
   })
+})
+
+function signOut() {
+  alert('Signed out!')
 }
 
-// Symptoms list
-const ex4 = ref([])
+function toggleConsult() {
+  consultOpen.value = !consultOpen.value
+}
 
+function toggleType() {
+  typeOpen.value = !typeOpen.value
+}
+
+function updateTime() {
+  setInterval(() => {
+    currentTime.value = new Date().toLocaleString()
+  }, 1000)
+}
+updateTime()
+
+const ex4 = ref([])
 const symptoms = [
   'Lethargy (low energy)',
   'Loss of appetite',
@@ -61,97 +65,153 @@ const symptoms = [
   'Pale gums',
   'Shivering or trembling',
 ]
-
-// Sign out function
-function signOut() {
-  alert('Signed out!')
-}
-
-// Contact Us: show alert then navigate
-function contactUs() {
-  alert('Contact us at support@tailcare.com!')
-  setTimeout(() => {
-    router.push('/contact')
-  }, 500) // delay for smooth UX
-}
 </script>
 
 <template>
   <v-app>
-    <!-- App Bar -->
-    <v-app-bar class="navbar" flat height="120" style="background-color: var(--navbar-bg)">
-      <v-container class="d-flex justify-space-between align-center fill-height pa-0">
-        <!-- Logo -->
-        <div class="d-flex" style="line-height: 1; margin-top: 4px">
-          <img :src="imgWel" alt="TailCare Logo" style="height: 100px; object-fit: contain" />
-        </div>
-
-        <!-- Menu with icon -->
-        <v-menu v-model="menu" offset-y>
-          <template #activator="{ props }">
-            <v-btn icon v-bind="props" class="mr-2">
-              <img
-                :src="imgMenu"
-                alt="User Icon"
-                style="width: 40px; height: 40px; object-fit: cover"
-              />
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item @click="changeTheme">
-              <v-list-item-title>Change Theme</v-list-item-title>
-            </v-list-item>
-
-            <v-list-item @click="contactUs">
-              <v-list-item-title>Contact Us</v-list-item-title>
-            </v-list-item>
-
-            <v-list-item @click="signOut">
-              <v-list-item-title>Sign Out</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-container>
-    </v-app-bar>
-
-    <!-- Main Content -->
     <v-main>
-      <v-container class="mt-10">
-        <v-row>
-          <!-- Symptoms List -->
-          <v-col cols="12" md="5">
-            <v-card class="pa-6" style="height: 500px; overflow-y: auto">
-              <v-row>
-                <v-col cols="12" v-for="(symptom, i) in symptoms" :key="i">
-                  <v-checkbox v-model="ex4" :label="symptom" :value="symptom" color="warning" />
-                </v-col>
-              </v-row>
-            </v-card>
-          </v-col>
+      <!-- Sidebar -->
+      <v-navigation-drawer app permanent width="250">
+        <v-container class="text-center mt-4">
+          <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
+          <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
+        </v-container>
 
-          <!-- Image -->
-          <v-col cols="12" md="7" class="d-flex justify-center align-center">
-            <img :src="imgType" alt="Four Pets" style="height: 500px; width: 700px" />
+        <v-list dense>
+          <v-list-item to="/doggo" component="RouterLink" class="menu-item">
+            <v-list-item-title>Dashboard</v-list-item-title>
+          </v-list-item>
+
+          <v-divider></v-divider>
+
+          <v-list-item @click="toggleConsult" class="menu-item">
+            <v-list-item-title>Consult</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item v-if="consultOpen" @click="toggleType" class="menu-item">
+            <v-list-item-title>Type</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item v-if="typeOpen" to="/symptomscat" component="RouterLink" class="menu-item">
+            <v-list-item-title>Cat</v-list-item-title>
+          </v-list-item>
+          <v-list-item v-if="typeOpen" to="/symptomsdog" component="RouterLink" class="menu-item">
+            <v-list-item-title>Dog</v-list-item-title>
+          </v-list-item>
+
+          <v-divider></v-divider>
+
+          <v-list-item to="/contact" component="RouterLink" class="menu-item">
+            <v-list-item-title>Contact Us</v-list-item-title>
+          </v-list-item>
+
+          <v-divider></v-divider>
+
+          <v-list-item @click="changeTheme" class="menu-item">
+            <v-list-item-title>Change Theme</v-list-item-title>
+          </v-list-item>
+
+          <v-divider></v-divider>
+
+          <v-list-item @click="signOut" class="menu-item">
+            <v-list-item-title>Sign Out</v-list-item-title>
+          </v-list-item>
+
+          <v-card class="date-time-card mt-5" style="padding: 16px; text-align: center">
+            <v-card-title class="text-h6">Current Date and Time</v-card-title>
+            <v-card-subtitle>
+              <div>{{ currentTime }}</div>
+            </v-card-subtitle>
+          </v-card>
+        </v-list>
+      </v-navigation-drawer>
+
+      <!-- Main Section with Checkboxes and Image -->
+      <v-container fluid style="max-height: calc(100vh - 80px); overflow-y: auto">
+        <v-row>
+          <v-col cols="12" class="second-column-background">
+            <v-row>
+              <!-- Symptoms List (Same as in second code) -->
+              <v-col cols="12" md="5">
+                <v-card class="pa-6" style="height: 500px; overflow-y: auto">
+                  <v-row>
+                    <v-col cols="12" v-for="(symptom, i) in symptoms" :key="i">
+                      <v-checkbox v-model="ex4" :label="symptom" :value="symptom" color="warning" />
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-col>
+
+              <!-- Image Section (Replaced with imgType from second code) -->
+              <v-col cols="12" md="7" class="d-flex justify-center align-center">
+                <img :src="imgType" alt="Dog Gif" style="height: 500px; width: auto" />
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-container>
     </v-main>
-
-    <!-- Footer -->
-    <v-footer border app class="justify-center" style="background-color: #f4f5f7">
-      TailCare@2025
-    </v-footer>
   </v-app>
 </template>
 
 <style scoped>
 :root {
-  --navbar-bg: #f4f5f7;
+  --second-column-bg: #f5d5e0;
 }
+
 [data-theme='dark'] {
-  --navbar-bg: #210635;
+  --second-column-bg: #210635;
 }
+
 [data-theme='custom'] {
-  --navbar-bg: #42od4b;
+  --second-column-bg: #74b0ff;
+}
+
+.custom-title {
+  font-family: 'Lora', serif;
+  color: #7b466a;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.menu-item {
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #7b466a;
+}
+
+.menu-item:hover {
+  background-color: #efefef;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.date-time-card {
+  background-color: #dfb6b2;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 180px;
+  margin-top: 16px;
+}
+
+.date-time-card .text-h6,
+.date-time-card .v-card-subtitle {
+  color: #5d3c64;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.second-column-background {
+  background-color: var(--second-column-bg);
 }
 </style>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@700&family=Roboto:wght@400&display=swap"
+  rel="stylesheet"
+/>
