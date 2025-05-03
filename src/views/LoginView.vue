@@ -1,10 +1,31 @@
 <script setup>
+import { requiredValidator, emailValidator } from '@/utils/validators'
 import { ref } from 'vue'
 import imgFour from '@/assets/images/four.png'
 import imgWel from '@/assets/images/welcome.png'
 
 const email = ref('')
 const password = ref('')
+const refVForm = ref()
+
+const formDataDefault = {
+  email: '',
+  password: ''
+}
+
+const formData= ref({
+  ...formDataDefault
+})
+
+const onSubmit = () => {
+  //alert(formData.value.password)
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
+}
 </script>
 
 <template>
@@ -28,18 +49,20 @@ const password = ref('')
                 <h1 id="welc" style="color: #8c52ff" class="d-flex justify-center">
                   <b>WELCOME OWNERS</b>
                 </h1>
-                <v-form fast-fail @submit.prevent>
+                <v-form ref="refVForm" @submit.prevent="onFormSubmit">
                   <v-text-field
+                  v-model="formData.email"
                     label="Email address"
                     type="email"
                     variant="solo-inverted"
-                    v-model="email"
+                    :rules="[requiredValidator, emailValidator]"
                   />
                   <v-text-field
+                  v-model="formData.password"
                     label="Password"
                     type="password"
                     variant="solo-inverted"
-                    v-model="password"
+                    :rules="[requiredValidator]"
                   />
                   <v-btn
                     variant="tonal"
