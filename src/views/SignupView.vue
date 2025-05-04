@@ -3,9 +3,11 @@ import {
   requiredValidator,
   emailValidator,
   passwordValidator,
-  confirmedValidator
+  confirmedValidator,
 } from '@/utils/validators'
 import { ref } from 'vue'
+import AlertNotification from '../../common/AlertNotification.vue'
+import { supabase, formActionDefault } from '@/utils/supabase.js'
 import imgSix from '@/assets/images/six.png'
 import imgWel from '@/assets/images/welcome.png'
 
@@ -17,18 +19,45 @@ const confirmPassword = ref('')
 const formDataDefault = {
   username: '',
   email: '',
-  password:'',
-  confirmPassword:''
+  password: '',
+  confirmPassword: '',
 }
 
 const formData = ref({
-  ...formDataDefault
+  ...formDataDefault,
+})
+
+const formAction = ref({
+  ...formActionDefault,
 })
 
 const refVForm = ref()
 
-const onSubmit = () => {
-  alert(formData.value.password)
+const onSubmit = async () => {
+  formAction.value = { ...formActionDefault }
+  formAction.value.formProcess = true
+
+  const { data, error } = await supabase.auth.signUp({
+    email: formData.value.email,
+    password: formData.value.password,
+    options: {
+      data: {
+        username: formData.value.username,
+      },
+    },
+  })
+
+  if (error) {
+    console.log(error)
+    formAction.value.formErrorMessage = error.message
+    formAction.value.formStatus = error.status
+  } else if (data) {
+    console.log(data)
+    formAction.value.formSuccessMessage = 'Successfully Registered Account!'
+    refVForm.value?.reset()
+  }
+
+  formAction.value.formProcess = false
 }
 
 const onFormSubmit = () => {
@@ -62,7 +91,13 @@ const onFormSubmit = () => {
                 <p class="d-flex justify-center" style="margin: 2%; color: skyblue">
                   Create account to get started
                 </p>
-                <v-form ref="refVForm" @submit.prevent="onFormSubmit">
+
+                <AlertNotification
+                  :form-success-message="formAction.formSuccessMessage"
+                  :form-error-message="formAction.formErrorMessage"
+                ></AlertNotification>
+
+                <v-form class="mt-5" ref="refVForm" @submit.prevent="onFormSubmit">
                   <v-text-field
                     v-model="formData.username"
                     variant="solo-inverted"
@@ -89,9 +124,19 @@ const onFormSubmit = () => {
                     variant="solo-inverted"
                     label="Confirm Password"
                     type="password"
-                    :rules="[requiredValidator, confirmedValidator(formData.confirmPassword, formData.password)]"
+                    :rules="[
+                      requiredValidator,
+                      confirmedValidator(formData.confirmPassword, formData.password),
+                    ]"
                   />
-                  <v-btn class="mt-2" type="submit" style="background-color: skyblue" block>
+                  <v-btn
+                    class="mt-2"
+                    type="submit"
+                    style="background-color: skyblue"
+                    block
+                    :disabled="formAction.formProcess"
+                    :loading="formAction.formProcess"
+                  >
                     Sign Up
                   </v-btn>
                 </v-form>
@@ -110,7 +155,7 @@ const onFormSubmit = () => {
               <img
                 :src="imgSix"
                 alt="Pets"
-                style="max-width: 100%; height: auto; object-fit: cover; border-radius: 8px"
+                style="max-width: 90%; height: auto; object-fit: cover; border-radius: 8px"
               />
             </v-col>
           </v-row>
