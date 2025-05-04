@@ -1,4 +1,5 @@
 <script setup>
+import { requiredValidator, emailValidator } from '@/utils/validators'
 import { ref } from 'vue'
 import imgFour from '@/assets/images/four.png'
 import imgWel from '@/assets/images/welcome.png'
@@ -8,11 +9,33 @@ import imgInsta from '@/assets/images/insta.png'
 
 const email = ref('')
 const password = ref('')
+<<<<<<< HEAD
 const showPassword = ref(false)
 
 const rules = {
   required: (value) => !!value || 'Required.',
   min: (v) => v.length >= 8 || 'Min 8 characters',
+=======
+const refVForm = ref()
+
+const formDataDefault = {
+  email: '',
+  password: ''
+}
+
+const formData= ref({
+  ...formDataDefault
+})
+
+const onSubmit = () => {
+  //alert(formData.value.password)
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
+>>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
 }
 </script>
 
@@ -32,6 +55,7 @@ const rules = {
 
       <!-- Main Content -->
       <v-main>
+<<<<<<< HEAD
         <v-container fluid>
           <v-row no-gutters>
             <!-- Left Image Section -->
@@ -59,10 +83,28 @@ const rules = {
                     type="email"
                     prepend-inner-icon="mdi-email"
                     :rules="[rules.required]"
+=======
+        <v-container>
+          <v-row class="align-center">
+            <!-- Login Form -->
+            <v-col cols="12" md="5">
+              <v-card class="pa-4 mt-8">
+                <h1 id="welc" style="color: #8c52ff" class="d-flex justify-center">
+                  <b>WELCOME OWNERS</b>
+                </h1>
+                <v-form ref="refVForm" @submit.prevent="onFormSubmit">
+                  <v-text-field
+                  v-model="formData.email"
+                    label="Email address"
+                    type="email"
+                    variant="solo-inverted"
+                    :rules="[requiredValidator, emailValidator]"
+>>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
                   />
 
                   <!-- Password field with animated eye icon -->
                   <v-text-field
+<<<<<<< HEAD
                     v-model="password"
                     :type="showPassword ? 'text' : 'password'"
                     variant="solo-inverted"
@@ -84,6 +126,14 @@ const rules = {
                     </template>
                   </v-text-field>
 
+=======
+                  v-model="formData.password"
+                    label="Password"
+                    type="password"
+                    variant="solo-inverted"
+                    :rules="[requiredValidator]"
+                  />
+>>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
                   <v-btn
                     class="mt-4"
                     style="background-color: skyblue"

@@ -1,5 +1,13 @@
 <script setup>
+import {
+  requiredValidator,
+  emailValidator,
+  passwordValidator,
+  confirmedValidator,
+} from '@/utils/validators'
 import { ref } from 'vue'
+import AlertNotification from '../../common/AlertNotification.vue'
+import { supabase, formActionDefault } from '@/utils/supabase.js'
 import imgSix from '@/assets/images/six.png'
 import imgWel from '@/assets/images/welcome.png'
 import imgEmail from '@/assets/images/email.png'
@@ -11,9 +19,61 @@ const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 
+<<<<<<< HEAD
 // Password visibility toggles
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
+=======
+const formDataDefault = {
+  username: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+}
+
+const formData = ref({
+  ...formDataDefault,
+})
+
+const formAction = ref({
+  ...formActionDefault,
+})
+
+const refVForm = ref()
+
+const onSubmit = async () => {
+  formAction.value = { ...formActionDefault }
+  formAction.value.formProcess = true
+
+  const { data, error } = await supabase.auth.signUp({
+    email: formData.value.email,
+    password: formData.value.password,
+    options: {
+      data: {
+        username: formData.value.username,
+      },
+    },
+  })
+
+  if (error) {
+    console.log(error)
+    formAction.value.formErrorMessage = error.message
+    formAction.value.formStatus = error.status
+  } else if (data) {
+    console.log(data)
+    formAction.value.formSuccessMessage = 'Successfully Registered Account!'
+    refVForm.value?.reset()
+  }
+
+  formAction.value.formProcess = false
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
+}
+>>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
 </script>
 
 <template>
@@ -32,6 +92,7 @@ const showConfirmPassword = ref(false)
 
       <!-- Main Content -->
       <v-main>
+<<<<<<< HEAD
         <v-container fluid>
           <v-row no-gutters>
             <!-- Left Image Section -->
@@ -55,21 +116,44 @@ const showConfirmPassword = ref(false)
                 <p class="mb-6" style="color: skyblue">Create account to get started</p>
 
                 <v-form fast-fail @submit.prevent>
+=======
+        <v-container>
+          <v-row class="align-center">
+            <!-- Registration Form -->
+            <v-col cols="12" md="5" class="mt-8">
+              <v-card class="pa-4">
+                <h1 id="welc" style="color: #8c52ff" class="d-flex justify-center">
+                  <b>REGISTER NOW</b>
+                </h1>
+                <p class="d-flex justify-center" style="margin: 2%; color: skyblue">
+                  Create account to get started
+                </p>
+
+                <AlertNotification
+                  :form-success-message="formAction.formSuccessMessage"
+                  :form-error-message="formAction.formErrorMessage"
+                ></AlertNotification>
+
+                <v-form class="mt-5" ref="refVForm" @submit.prevent="onFormSubmit">
+>>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
                   <v-text-field
-                    v-model="username"
+                    v-model="formData.username"
                     variant="solo-inverted"
                     label="Username"
                     prepend-inner-icon="mdi-account"
                     type="text"
+                    :rules="[requiredValidator]"
                   />
                   <v-text-field
-                    v-model="email"
+                    v-model="formData.email"
                     variant="solo-inverted"
                     label="Email address"
                     prepend-inner-icon="mdi-email"
                     type="email"
+                    :rules="[requiredValidator, emailValidator]"
                   />
                   <v-text-field
+<<<<<<< HEAD
                     v-model="password"
                     :type="showPassword ? 'text' : 'password'"
                     variant="solo-inverted"
@@ -110,6 +194,32 @@ const showConfirmPassword = ref(false)
                     </template>
                   </v-text-field>
                   <v-btn class="mt-4" style="background-color: skyblue" type="submit" block>
+=======
+                    v-model="formData.password"
+                    variant="solo-inverted"
+                    label="Create Password"
+                    type="password"
+                    :rules="[requiredValidator, passwordValidator]"
+                  />
+                  <v-text-field
+                    v-model="formData.confirmPassword"
+                    variant="solo-inverted"
+                    label="Confirm Password"
+                    type="password"
+                    :rules="[
+                      requiredValidator,
+                      confirmedValidator(formData.confirmPassword, formData.password),
+                    ]"
+                  />
+                  <v-btn
+                    class="mt-2"
+                    type="submit"
+                    style="background-color: skyblue"
+                    block
+                    :disabled="formAction.formProcess"
+                    :loading="formAction.formProcess"
+                  >
+>>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
                     Sign Up
                   </v-btn>
                 </v-form>
@@ -148,6 +258,18 @@ const showConfirmPassword = ref(false)
                 </div>
               </div>
             </v-col>
+<<<<<<< HEAD
+=======
+
+            <!-- Image Section -->
+            <v-col cols="12" md="7" class="d-flex justify-center mt-6 mt-md-0">
+              <img
+                :src="imgSix"
+                alt="Pets"
+                style="max-width: 90%; height: auto; object-fit: cover; border-radius: 8px"
+              />
+            </v-col>
+>>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
           </v-row>
         </v-container>
       </v-main>
