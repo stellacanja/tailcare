@@ -5,6 +5,7 @@ import {
   passwordValidator,
   confirmedValidator,
 } from '@/utils/validators'
+
 import { ref } from 'vue'
 import AlertNotification from '../../common/AlertNotification.vue'
 import { supabase, formActionDefault } from '@/utils/supabase.js'
@@ -14,16 +15,6 @@ import imgEmail from '@/assets/images/email.png'
 import imgFb from '@/assets/images/fb.png'
 import imgInsta from '@/assets/images/insta.png'
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-
-<<<<<<< HEAD
-// Password visibility toggles
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
-=======
 const formDataDefault = {
   username: '',
   email: '',
@@ -31,15 +22,12 @@ const formDataDefault = {
   confirmPassword: '',
 }
 
-const formData = ref({
-  ...formDataDefault,
-})
-
-const formAction = ref({
-  ...formActionDefault,
-})
-
+const formData = ref({ ...formDataDefault })
+const formAction = ref({ ...formActionDefault })
 const refVForm = ref()
+
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 const onSubmit = async () => {
   formAction.value = { ...formActionDefault }
@@ -73,7 +61,6 @@ const onFormSubmit = () => {
     if (valid) onSubmit()
   })
 }
->>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
 </script>
 
 <template>
@@ -92,31 +79,6 @@ const onFormSubmit = () => {
 
       <!-- Main Content -->
       <v-main>
-<<<<<<< HEAD
-        <v-container fluid>
-          <v-row no-gutters>
-            <!-- Left Image Section -->
-            <v-col
-              cols="12"
-              md="6"
-              class="pa-6 d-flex align-center justify-center"
-              style="background-color: #f4f5f7"
-            >
-              <img
-                :src="imgSix"
-                alt="Illustration"
-                style="width: 100%; max-width: 600px; height: auto"
-              />
-            </v-col>
-
-            <!-- Right Form Section -->
-            <v-col cols="12" md="6" class="pa-6">
-              <div class="pa-6">
-                <h1 class="text-h4 font-weight-bold mb-2" style="color: #8c52ff">REGISTER NOW</h1>
-                <p class="mb-6" style="color: skyblue">Create account to get started</p>
-
-                <v-form fast-fail @submit.prevent>
-=======
         <v-container>
           <v-row class="align-center">
             <!-- Registration Form -->
@@ -132,10 +94,9 @@ const onFormSubmit = () => {
                 <AlertNotification
                   :form-success-message="formAction.formSuccessMessage"
                   :form-error-message="formAction.formErrorMessage"
-                ></AlertNotification>
+                />
 
                 <v-form class="mt-5" ref="refVForm" @submit.prevent="onFormSubmit">
->>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
                   <v-text-field
                     v-model="formData.username"
                     variant="solo-inverted"
@@ -152,13 +113,14 @@ const onFormSubmit = () => {
                     type="email"
                     :rules="[requiredValidator, emailValidator]"
                   />
+
                   <v-text-field
-<<<<<<< HEAD
-                    v-model="password"
+                    v-model="formData.password"
                     :type="showPassword ? 'text' : 'password'"
                     variant="solo-inverted"
                     label="Create Password"
                     prepend-inner-icon="mdi-lock"
+                    :rules="[requiredValidator, passwordValidator]"
                   >
                     <template #append-inner>
                       <v-fade-transition>
@@ -173,12 +135,17 @@ const onFormSubmit = () => {
                       </v-fade-transition>
                     </template>
                   </v-text-field>
+
                   <v-text-field
-                    v-model="confirmPassword"
+                    v-model="formData.confirmPassword"
                     :type="showConfirmPassword ? 'text' : 'password'"
                     variant="solo-inverted"
                     label="Confirm Password"
                     prepend-inner-icon="mdi-lock-check"
+                    :rules="[
+                      requiredValidator,
+                      confirmedValidator(formData.password),
+                    ]"
                   >
                     <template #append-inner>
                       <v-fade-transition>
@@ -193,33 +160,15 @@ const onFormSubmit = () => {
                       </v-fade-transition>
                     </template>
                   </v-text-field>
-                  <v-btn class="mt-4" style="background-color: skyblue" type="submit" block>
-=======
-                    v-model="formData.password"
-                    variant="solo-inverted"
-                    label="Create Password"
-                    type="password"
-                    :rules="[requiredValidator, passwordValidator]"
-                  />
-                  <v-text-field
-                    v-model="formData.confirmPassword"
-                    variant="solo-inverted"
-                    label="Confirm Password"
-                    type="password"
-                    :rules="[
-                      requiredValidator,
-                      confirmedValidator(formData.confirmPassword, formData.password),
-                    ]"
-                  />
+
                   <v-btn
-                    class="mt-2"
+                    class="mt-4"
                     type="submit"
                     style="background-color: skyblue"
                     block
                     :disabled="formAction.formProcess"
                     :loading="formAction.formProcess"
                   >
->>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
                     Sign Up
                   </v-btn>
                 </v-form>
@@ -256,10 +205,8 @@ const onFormSubmit = () => {
                   <span>Already have an account?</span>
                   <RouterLink to="/" style="color: skyblue"> Log In</RouterLink>
                 </div>
-              </div>
+              </v-card>
             </v-col>
-<<<<<<< HEAD
-=======
 
             <!-- Image Section -->
             <v-col cols="12" md="7" class="d-flex justify-center mt-6 mt-md-0">
@@ -269,7 +216,6 @@ const onFormSubmit = () => {
                 style="max-width: 90%; height: auto; object-fit: cover; border-radius: 8px"
               />
             </v-col>
->>>>>>> bff16da8d674d7ffac8a1c37cb54c6293ff8b8da
           </v-row>
         </v-container>
       </v-main>
