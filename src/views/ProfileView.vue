@@ -124,6 +124,7 @@ onMounted(() => {
         <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
       </v-container>
 
+      ```
       <v-list dense>
         <v-list-item to="/layout" component="RouterLink" class="menu-item">
           <v-list-item-title>Profile</v-list-item-title>
@@ -188,7 +189,11 @@ onMounted(() => {
           <v-col cols="12" sm="8" md="6">
             <v-card class="pa-6" elevation="10" rounded="lg">
               <div class="text-center">
-                <v-avatar size="110" class="mx-auto mb-3 profile-avatar" @click="avatarDialog = true">
+                <v-avatar
+                  size="110"
+                  class="mx-auto mb-3 profile-avatar"
+                  @click="avatarDialog = true"
+                >
                   <template v-if="userData.profileUrl">
                     <v-img :src="userData.profileUrl" />
                   </template>
@@ -249,6 +254,7 @@ onMounted(() => {
         </v-card>
       </v-dialog>
     </v-main>
+    ```
   </v-app>
 </template>
 
