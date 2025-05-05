@@ -5,6 +5,18 @@ import { useRouter } from 'vue-router'
 import { onMounted, ref, watchEffect } from 'vue'
 import imgWel from '@/assets/images/welcome.png'
 
+import imgCute1 from '@/assets/images/avatar cat/cat1.png'
+import imgCute2 from '@/assets/images/avatar cat/cat2.png'
+import imgCute3 from '@/assets/images/avatar cat/cat3.png'
+import imgCute4 from '@/assets/images/avatar cat/cat4.png'
+import imgCute5 from '@/assets/images/avatar cat/cat5.png'
+
+import imgDog1 from '@/assets/images/avatar dog/dog1.png'
+import imgDog2 from '@/assets/images/avatar dog/dog2.png'
+import imgDog3 from '@/assets/images/avatar dog/dog3.png'
+import imgDog4 from '@/assets/images/avatar dog/dog4.png'
+import imgDog5 from '@/assets/images/avatar dog/dog5.png'
+
 const router = useRouter()
 
 const theme = ref('light')
@@ -12,6 +24,17 @@ const consultOpen = ref(false)
 const typeOpen = ref(false)
 const currentTime = ref(new Date().toLocaleString())
 const formAction = ref({ ...formActionDefault })
+const avatarDialog = ref(false)
+
+const catAvatars = [imgCute1, imgCute2, imgCute3, imgCute4, imgCute5]
+const dogAvatars = [imgDog1, imgDog2, imgDog3, imgDog4, imgDog5]
+
+const userData = ref({
+  initials: '',
+  email: '',
+  username: '',
+  profileUrl: null,
+})
 
 const themes = {
   light: {
@@ -46,13 +69,6 @@ setInterval(() => {
 const toggleConsult = () => (consultOpen.value = !consultOpen.value)
 const toggleType = () => (typeOpen.value = !typeOpen.value)
 
-const userData = ref({
-  initials: '',
-  email: '',
-  username: '',
-  profileUrl: null,
-})
-
 const getUser = async () => {
   const {
     data: { user },
@@ -67,6 +83,22 @@ const getUser = async () => {
   }
 }
 
+const selectAvatar = async (avatarUrl) => {
+  userData.value.profileUrl = avatarUrl
+  avatarDialog.value = false
+
+  const { error: updateError } = await supabase.auth.updateUser({
+    data: { profileUrl: avatarUrl },
+  })
+
+  if (updateError) {
+    console.error('Error updating user metadata:', updateError)
+    return
+  }
+
+  await getUser()
+}
+
 const onLogout = async () => {
   formAction.value.formProcess = true
   const { error } = await supabase.auth.signOut()
@@ -76,42 +108,6 @@ const onLogout = async () => {
     return
   }
   router.replace('/')
-}
-
-const handleImageUpload = async (e) => {
-  const file = e.target.files[0]
-  if (!file) return
-
-  const filePath = `avatars/${Date.now()}_${file.name}`
-  const { error: uploadError } = await supabase.storage
-    .from('profile-pictures')
-    .upload(filePath, file)
-
-  if (uploadError) {
-    console.error('Upload error:', uploadError)
-    return
-  }
-
-  const { data, error: urlError } = supabase.storage.from('profile-pictures').getPublicUrl(filePath)
-
-  if (urlError || !data?.publicUrl) {
-    console.error('Error getting public URL:', urlError)
-    return
-  }
-
-  const publicUrl = data.publicUrl
-  userData.value.profileUrl = publicUrl
-
-  const { error: updateError } = await supabase.auth.updateUser({
-    data: { profileUrl: publicUrl },
-  })
-
-  if (updateError) {
-    console.error('Error updating user metadata:', updateError)
-    return
-  }
-
-  await getUser()
 }
 
 onMounted(() => {
@@ -192,11 +188,7 @@ onMounted(() => {
           <v-col cols="12" sm="8" md="6">
             <v-card class="pa-6" elevation="10" rounded="lg">
               <div class="text-center">
-                <v-avatar
-                  size="110"
-                  class="mx-auto mb-3 profile-avatar"
-                  @click="$refs.imageInput.click()"
-                >
+                <v-avatar size="110" class="mx-auto mb-3 profile-avatar" @click="avatarDialog = true">
                   <template v-if="userData.profileUrl">
                     <v-img :src="userData.profileUrl" />
                   </template>
@@ -205,20 +197,12 @@ onMounted(() => {
                   </template>
                 </v-avatar>
 
-                <p class="text-caption grey--text mb-1">Click image to upload</p>
+                <p class="text-caption grey--text mb-1">Click image to choose avatar</p>
 
                 <h3 class="text-h6 mt-2 font-weight-bold">{{ userData.username }}</h3>
                 <p class="text-body-2 grey--text text--darken-2">{{ userData.email }}</p>
 
                 <v-divider class="my-5" />
-
-                <input
-                  ref="imageInput"
-                  type="file"
-                  accept="image/*"
-                  class="d-none"
-                  @change="handleImageUpload"
-                />
 
                 <v-btn color="error" variant="outlined" rounded @click="onLogout"> Logout </v-btn>
               </div>
@@ -226,6 +210,44 @@ onMounted(() => {
           </v-col>
         </v-row>
       </v-container>
+
+      <!-- Avatar Picker Dialog -->
+      <v-dialog v-model="avatarDialog" max-width="600">
+        <v-card>
+          <v-card-title class="text-h6">Choose Your Avatar</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text>
+            <h4 class="mb-2">Cats</h4>
+            <v-row>
+              <v-col v-for="(img, index) in catAvatars" :key="'cat-' + index" cols="4">
+                <v-img
+                  :src="img"
+                  class="avatar-choice"
+                  @click="selectAvatar(img)"
+                  height="100"
+                  cover
+                />
+              </v-col>
+            </v-row>
+            <h4 class="mt-4 mb-2">Dogs</h4>
+            <v-row>
+              <v-col v-for="(img, index) in dogAvatars" :key="'dog-' + index" cols="4">
+                <v-img
+                  :src="img"
+                  class="avatar-choice"
+                  @click="selectAvatar(img)"
+                  height="100"
+                  cover
+                />
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="avatarDialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-main>
   </v-app>
 </template>
@@ -239,7 +261,7 @@ onMounted(() => {
 .main-background {
   background-color: var(--background-color);
   min-height: 100vh;
-  padding-left: 250px; /* Matches sidebar width */
+  padding-left: 250px;
 }
 
 .custom-title {
@@ -283,16 +305,14 @@ onMounted(() => {
   border-color: #3f51b5;
 }
 
-.text-center {
-  text-align: center;
+.avatar-choice {
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
 }
 
-.v-card {
-  border-radius: 20px;
-}
-
-.v-btn {
-  text-transform: none;
-  font-weight: 500;
+.avatar-choice:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 </style>
