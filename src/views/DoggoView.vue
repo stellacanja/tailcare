@@ -6,14 +6,16 @@ import imgWel from '@/assets/images/welcome.png'
 
 const router = useRouter()
 
-// Initializing theme and other states
 const theme = ref('light')
-const consultOpen = ref(false)
-const typeOpen = ref(false)
 const currentTime = ref(new Date().toLocaleString())
 const formAction = ref({ ...formActionDefault })
 
-// Theme settings
+const activeMenu = ref(null) // 'consult' | 'type' | 'cat' | 'dog' | null
+
+const setMenu = (menu) => {
+  activeMenu.value = activeMenu.value === menu ? null : menu
+}
+
 const themes = {
   light: {
     '--navbar-bg': '#f5d5e0',
@@ -105,8 +107,6 @@ const headlines = ref([
 ])
 
 const goToLink = (url) => window.open(url, '_blank')
-const toggleConsult = () => (consultOpen.value = !consultOpen.value)
-const toggleType = () => (typeOpen.value = !typeOpen.value)
 
 setInterval(() => {
   currentTime.value = new Date().toLocaleString()
@@ -137,18 +137,54 @@ setInterval(() => {
 
           <v-divider></v-divider>
 
-          <v-list-item @click="toggleConsult" class="menu-item">
-            <v-list-item-title>Consult</v-list-item-title>
+          <!-- Consult Menu -->
+          <v-list-item
+            @click="setMenu('consult')"
+            class="menu-item"
+            :class="{ active: activeMenu === 'consult' }"
+          >
+            <v-list-item-title>
+              Consult
+              <v-icon v-if="activeMenu === 'consult'" small class="ml-2">mdi-chevron-down</v-icon>
+            </v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="consultOpen" @click="toggleType" class="menu-item">
-            <v-list-item-title>Type</v-list-item-title>
+          <!-- Type Menu -->
+          <v-list-item
+            v-if="activeMenu === 'consult'"
+            @click="setMenu('type')"
+            class="menu-item sub-menu"
+            :class="{ active: activeMenu === 'type' }"
+          >
+            <v-list-item-title>
+              Type
+              <v-icon v-if="activeMenu === 'type'" small class="ml-2">mdi-chevron-down</v-icon>
+            </v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="typeOpen" to="/symptomscat" component="RouterLink" class="menu-item">
+          <!-- Cat -->
+          <v-list-item
+            v-if="activeMenu === 'type'"
+            to="/symptomscat"
+            component="RouterLink"
+            class="menu-item sub-sub-menu"
+            :class="{ active: activeMenu === 'cat' }"
+            @click="setMenu('cat')"
+          >
+            <v-icon left>mdi-cat</v-icon>
             <v-list-item-title>Cat</v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="typeOpen" to="/symptomsdog" component="RouterLink" class="menu-item">
+
+          <!-- Dog -->
+          <v-list-item
+            v-if="activeMenu === 'type'"
+            to="/symptomsdog"
+            component="RouterLink"
+            class="menu-item sub-sub-menu"
+            :class="{ active: activeMenu === 'dog' }"
+            @click="setMenu('dog')"
+          >
+            <v-icon left>mdi-dog</v-icon>
             <v-list-item-title>Dog</v-list-item-title>
           </v-list-item>
 
@@ -252,15 +288,31 @@ setInterval(() => {
 }
 
 .menu-item {
+  display: flex;
+  align-items: center;
   padding: 16px 20px;
   margin-bottom: 12px;
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
   color: #7b466a;
+  cursor: pointer;
 }
 
 .menu-item:hover {
   background-color: #efefef;
+}
+
+.menu-item.active {
+  background-color: #d5b7f5 !important;
+  font-weight: bold;
+}
+
+.sub-menu {
+  padding-left: 30px;
+}
+
+.sub-sub-menu {
+  padding-left: 50px;
 }
 
 .date-time-card {

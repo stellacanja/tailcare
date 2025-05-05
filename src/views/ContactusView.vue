@@ -1,15 +1,15 @@
 <script setup>
 import { ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 import imgWel from '@/assets/images/welcome.png'
 import imgContact from '@/assets/images/contact.png'
 import imgFb from '@/assets/images/fb.png'
 import imgInsta from '@/assets/images/insta.png'
 import imgEmail from '@/assets/images/email.png'
-import { useRouter } from 'vue-router'
 import { supabase, formActionDefault } from '@/utils/supabase'
 
 const router = useRouter()
-// Theme setup
+
 const theme = ref('light')
 const consultOpen = ref(false)
 const typeOpen = ref(false)
@@ -19,7 +19,13 @@ const formAction = ref({ ...formActionDefault })
 const themes = {
   light: { '--second-column-bg': '#f5d5e0' },
   dark: { '--second-column-bg': '#210635' },
-  custom: { '--second-column-bg': '#42od4b' },
+  custom: { '--second-column-bg': '#42d04b' }, // fixed hex
+}
+
+const activeMenu = ref(null)
+
+const setMenu = (menu) => {
+  activeMenu.value = activeMenu.value === menu ? null : menu
 }
 
 const onLogout = async () => {
@@ -47,10 +53,6 @@ watchEffect(() => {
   })
 })
 
-function signOut() {
-  alert('Signed out!')
-}
-
 function toggleConsult() {
   consultOpen.value = !consultOpen.value
 }
@@ -60,13 +62,11 @@ function toggleType() {
 }
 
 function updateTime() {
-  setInterval(() => {
+  const interval = setInterval(() => {
     currentTime.value = new Date().toLocaleString()
   }, 1000)
 }
 updateTime()
-
-const ex4 = ref([])
 
 const symptoms = [
   'Lethargy',
@@ -91,7 +91,6 @@ const symptoms = [
 <template>
   <v-app>
     <v-main>
-      <!-- Sidebar -->
       <v-navigation-drawer app permanent width="250">
         <v-container class="text-center mt-4">
           <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
@@ -109,18 +108,47 @@ const symptoms = [
 
           <v-divider></v-divider>
 
-          <v-list-item @click="toggleConsult" class="menu-item">
+          <!-- Consult toggle -->
+          <v-list-item @click="setMenu('consult')" class="menu-item">
             <v-list-item-title>Consult</v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="consultOpen" @click="toggleType" class="menu-item">
-            <v-list-item-title>Type</v-list-item-title>
+          <!-- Type Menu -->
+          <v-list-item
+            v-if="activeMenu === 'consult'"
+            @click="setMenu('type')"
+            class="menu-item sub-menu"
+            :class="{ active: activeMenu === 'type' }"
+          >
+            <v-list-item-title>
+              Type
+              <v-icon v-if="activeMenu === 'type'" small class="ml-2">mdi-chevron-down</v-icon>
+            </v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="typeOpen" to="/symptomscat" component="RouterLink" class="menu-item">
+          <!-- Cat -->
+          <v-list-item
+            v-if="activeMenu === 'type'"
+            to="/symptomscat"
+            component="RouterLink"
+            class="menu-item sub-sub-menu"
+            :class="{ active: activeMenu === 'cat' }"
+            @click="setMenu('cat')"
+          >
+            <v-icon left>mdi-cat</v-icon>
             <v-list-item-title>Cat</v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="typeOpen" to="/symptomsdog" component="RouterLink" class="menu-item">
+
+          <!-- Dog -->
+          <v-list-item
+            v-if="activeMenu === 'type'"
+            to="/symptomsdog"
+            component="RouterLink"
+            class="menu-item sub-sub-menu"
+            :class="{ active: activeMenu === 'dog' }"
+            @click="setMenu('dog')"
+          >
+            <v-icon left>mdi-dog</v-icon>
             <v-list-item-title>Dog</v-list-item-title>
           </v-list-item>
 
@@ -129,8 +157,6 @@ const symptoms = [
           <v-list-item to="/contact" component="RouterLink" class="menu-item">
             <v-list-item-title>Contact Us</v-list-item-title>
           </v-list-item>
-
-          <v-divider></v-divider>
 
           <v-divider></v-divider>
 
@@ -152,9 +178,9 @@ const symptoms = [
         </v-list>
       </v-navigation-drawer>
 
-      <!-- Main Section with Contact Us Content -->
+      <!-- Main Content -->
       <v-container fluid class="pa-0">
-        <!-- Hero Section with Background Image -->
+        <!-- Hero Section -->
         <div
           :style="{
             backgroundImage: `url(${imgContact})`,
@@ -181,7 +207,6 @@ const symptoms = [
         <!-- Contact Info Cards -->
         <v-container class="mt-10">
           <v-row dense justify="center" align="center">
-            <!-- Facebook Section -->
             <v-col cols="12" md="4" class="text-center">
               <v-card elevation="0">
                 <v-card-text>
@@ -207,7 +232,6 @@ const symptoms = [
               </v-card>
             </v-col>
 
-            <!-- Instagram Section -->
             <v-col cols="12" md="4" class="text-center">
               <v-card elevation="0">
                 <v-card-text>
@@ -233,7 +257,6 @@ const symptoms = [
               </v-card>
             </v-col>
 
-            <!-- Email Section -->
             <v-col cols="12" md="4" class="text-center">
               <v-card elevation="0">
                 <v-card-text>
@@ -272,7 +295,7 @@ const symptoms = [
 }
 
 [data-theme='custom'] {
-  --second-column-bg: #42od4b;
+  --second-column-bg: #42d04b;
 }
 
 .custom-title {

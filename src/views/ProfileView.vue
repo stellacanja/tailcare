@@ -35,6 +35,11 @@ const userData = ref({
   username: '',
   profileUrl: null,
 })
+const activeMenu = ref(null) // 'consult' | 'type' | 'cat' | 'dog' | null
+
+const setMenu = (menu) => {
+  activeMenu.value = activeMenu.value === menu ? null : menu
+}
 
 const themes = {
   light: {
@@ -135,18 +140,54 @@ onMounted(() => {
 
         <v-divider></v-divider>
 
-        <v-list-item @click="toggleConsult" class="menu-item">
-          <v-list-item-title>Consult</v-list-item-title>
+        <!-- Consult Menu -->
+        <v-list-item
+          @click="setMenu('consult')"
+          class="menu-item"
+          :class="{ active: activeMenu === 'consult' }"
+        >
+          <v-list-item-title>
+            Consult
+            <v-icon v-if="activeMenu === 'consult'" small class="ml-2">mdi-chevron-down</v-icon>
+          </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="consultOpen" @click="toggleType" class="menu-item">
-          <v-list-item-title>Type</v-list-item-title>
+        <!-- Type Menu -->
+        <v-list-item
+          v-if="activeMenu === 'consult'"
+          @click="setMenu('type')"
+          class="menu-item sub-menu"
+          :class="{ active: activeMenu === 'type' }"
+        >
+          <v-list-item-title>
+            Type
+            <v-icon v-if="activeMenu === 'type'" small class="ml-2">mdi-chevron-down</v-icon>
+          </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="typeOpen" to="/symptomscat" component="RouterLink" class="menu-item">
+        <!-- Cat -->
+        <v-list-item
+          v-if="activeMenu === 'type'"
+          to="/symptomscat"
+          component="RouterLink"
+          class="menu-item sub-sub-menu"
+          :class="{ active: activeMenu === 'cat' }"
+          @click="setMenu('cat')"
+        >
+          <v-icon left>mdi-cat</v-icon>
           <v-list-item-title>Cat</v-list-item-title>
         </v-list-item>
-        <v-list-item v-if="typeOpen" to="/symptomsdog" component="RouterLink" class="menu-item">
+
+        <!-- Dog -->
+        <v-list-item
+          v-if="activeMenu === 'type'"
+          to="/symptomsdog"
+          component="RouterLink"
+          class="menu-item sub-sub-menu"
+          :class="{ active: activeMenu === 'dog' }"
+          @click="setMenu('dog')"
+        >
+          <v-icon left>mdi-dog</v-icon>
           <v-list-item-title>Dog</v-list-item-title>
         </v-list-item>
 
