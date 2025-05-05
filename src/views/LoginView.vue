@@ -1,52 +1,57 @@
 <script setup>
-import { requiredValidator, emailValidator } from '@/utils/validators'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { requiredValidator, emailValidator } from '@/utils/validators'
+import { formActionDefault, supabase } from '@/utils/supabase'
+
+// Image Assets
 import imgFour from '@/assets/images/four.png'
 import imgWel from '@/assets/images/welcome.png'
 import imgEmail from '@/assets/images/email.png'
 import imgFb from '@/assets/images/fb.png'
 import imgInsta from '@/assets/images/insta.png'
-import { formActionDefault, supabase } from '@/utils/supabase'
-import { useRouter } from 'vue-router'
 
+// Components
+import AlertNotification from '../../common/AlertNotification.vue'
+
+// Router
 const router = useRouter()
 
+// Form Setup
 const refVForm = ref()
 const showPassword = ref(false)
 
-// Set up default form data
 const formDataDefault = {
   email: '',
   password: '',
 }
-
 const formData = ref({ ...formDataDefault })
 
-const formAction = ref({
-  ...formActionDefault,
-})
+const formAction = ref({ ...formActionDefault })
 
 const onSubmit = async () => {
-  formAction.value = { ...formActionDefault }
-  formAction.value.formProcess = true
+  formAction.value = { ...formActionDefault, formProcess: true }
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: formData.value.email,
-    password: formData.value.password,
-  })
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: formData.value.email,
+      password: formData.value.password,
+    })
 
-  if (error) {
-    console.error(error)
-    formAction.value.formErrorMessage = error.message
-    formAction.value.formStatus = error.status
-  } else if (data) {
-    console.log(data)
-    formAction.value.formSuccessMessage = 'Successfully Logged In'
-    router.replace('/doggo')
-    refVForm.value?.reset()
+    if (error) {
+      formAction.value.formErrorMessage = error.message
+      formAction.value.formStatus = error.status
+    } else {
+      formAction.value.formSuccessMessage = 'Successfully Logged In'
+      refVForm.value?.reset()
+      router.replace('/doggo')
+    }
+  } catch (err) {
+    formAction.value.formErrorMessage = 'Unexpected error occurred.'
+    console.error(err)
+  } finally {
+    formAction.value.formProcess = false
   }
-
-  formAction.value.formProcess = false
 }
 
 const onFormSubmit = () => {
@@ -57,6 +62,11 @@ const onFormSubmit = () => {
 </script>
 
 <template>
+  <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  />
+
   <v-responsive>
     <v-app>
       <!-- Top Logo -->
@@ -126,7 +136,13 @@ const onFormSubmit = () => {
                     </v-text-field>
 
                     <!-- Submit Button -->
-                    <v-btn class="mt-4" style="background-color: skyblue" type="submit" block>
+                    <v-btn
+                      class="mt-4"
+                      style="background-color: skyblue"
+                      type="submit"
+                      block
+                      :loading="formAction.formProcess"
+                    >
                       Log in
                     </v-btn>
                   </v-form>
