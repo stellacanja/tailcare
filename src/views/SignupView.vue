@@ -115,26 +115,6 @@ const onFormSubmit = () => {
                     type="email"
                     :rules="[requiredValidator, emailValidator]"
                   />
-
-                  <v-text-field
-                    v-model="formData.password"
-                    variant="solo-inverted"
-                    label="Create Password"
-                    type="password"
-                    prepend-inner-icon="mdi-lock"
-                    :rules="[requiredValidator, passwordValidator]"
-                  />
-                  <v-text-field
-                    v-model="formData.confirmPassword"
-                    variant="solo-inverted"
-                    label="Confirm Password"
-                    type="password"
-                    prepend-inner-icon="mdi-lock-check"
-                    :rules="[
-                      requiredValidator,
-                      confirmedValidator(formData.confirmPassword, formData.password),
-                    ]"
-                  />
                   <v-text-field
                     v-model="formData.password"
                     :type="showPassword ? 'text' : 'password'"
@@ -156,28 +136,17 @@ const onFormSubmit = () => {
                       </v-fade-transition>
                     </template>
                   </v-text-field>
-
                   <v-text-field
                     v-model="formData.confirmPassword"
-                    :type="showConfirmPassword ? 'text' : 'password'"
                     variant="solo-inverted"
                     label="Confirm Password"
+                    type="password"
                     prepend-inner-icon="mdi-lock-check"
-                    :rules="[requiredValidator, confirmedValidator(formData.password)]"
-                  >
-                    <template #append-inner>
-                      <v-fade-transition>
-                        <v-icon
-                          :key="showConfirmPassword"
-                          class="mr-2"
-                          @click="showConfirmPassword = !showConfirmPassword"
-                          style="cursor: pointer"
-                        >
-                          {{ showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye' }}
-                        </v-icon>
-                      </v-fade-transition>
-                    </template>
-                  </v-text-field>
+                    :rules="[
+                      requiredValidator,
+                      confirmedValidator(formData.confirmPassword, formData.password),
+                    ]"
+                  />
 
                   <v-btn
                     class="mt-4"
