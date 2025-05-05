@@ -5,7 +5,8 @@ import { useRouter } from 'vue-router'
 import imgWel from '@/assets/images/welcome.png'
 
 const router = useRouter()
-
+// Initializing theme and other states
+const drawer = ref(true)
 const theme = ref('light')
 const currentTime = ref(new Date().toLocaleString())
 const formAction = ref({ ...formActionDefault })
@@ -115,8 +116,16 @@ setInterval(() => {
 
 <template>
   <v-app>
+    <!-- App bar with sidebar toggle -->
+    <v-app-bar app color="var(--navbar-bg)">
+      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-toolbar-title class="custom-title">TailCare Dashboard</v-toolbar-title>
+    </v-app-bar>
+
     <v-main>
+      <!-- Sidebar with toggle -->
       <v-navigation-drawer
+        v-model="drawer"
         app
         permanent
         width="250"
