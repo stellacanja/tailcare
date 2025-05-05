@@ -5,7 +5,7 @@ import DoggoView from '@/views/DoggoView.vue'
 import SymptomsdogView from '@/views/SymptomsdogView.vue'
 import SymptomscatView from '@/views/SymptomscatView.vue'
 import ContactusView from '@/views/ContactusView.vue'
-import AppLayoutView from '@/views/AppLayoutView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,7 +21,7 @@ const router = createRouter({
 
     { path: '/symptomscat', name: 'symptomscat', component: SymptomscatView },
     { path: '/contact', name: 'contactus', component: ContactusView },
-    { path: '/layout', name: 'layout', component: AppLayoutView },
+    { path: '/layout', name: 'layout', component: ProfileView },
   ],
 })
 
