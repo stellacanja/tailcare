@@ -16,7 +16,6 @@ import imgFb from '@/assets/images/fb.png'
 import imgInsta from '@/assets/images/insta.png'
 
 // Reactive form state
-
 const formDataDefault = {
   username: '',
   email: '',
@@ -29,7 +28,6 @@ const formAction = ref({ ...formActionDefault })
 const refVForm = ref()
 
 // Submit logic
-
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 
@@ -136,17 +134,32 @@ const onFormSubmit = () => {
                       </v-fade-transition>
                     </template>
                   </v-text-field>
+
+                  <!-- ✅ Modified Confirm Password -->
                   <v-text-field
                     v-model="formData.confirmPassword"
+                    :type="showConfirmPassword ? 'text' : 'password'"
                     variant="solo-inverted"
                     label="Confirm Password"
-                    type="password"
                     prepend-inner-icon="mdi-lock-check"
                     :rules="[
                       requiredValidator,
                       confirmedValidator(formData.confirmPassword, formData.password),
                     ]"
-                  />
+                  >
+                    <template #append-inner>
+                      <v-fade-transition>
+                        <v-icon
+                          :key="showConfirmPassword"
+                          class="mr-2"
+                          @click="showConfirmPassword = !showConfirmPassword"
+                          style="cursor: pointer"
+                        >
+                          {{ showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye' }}
+                        </v-icon>
+                      </v-fade-transition>
+                    </template>
+                  </v-text-field>
 
                   <v-btn
                     class="mt-4"
