@@ -94,124 +94,37 @@ const symptoms = [
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-toolbar-title>TailCare</v-toolbar-title>
     </v-app-bar>
-
-    <v-navigation-drawer v-model="drawer" app permanent width="250">
-      <v-container class="text-center mt-4">
-        <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
-        <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
-      </v-container>
-      <v-list dense>
-        <v-list-item to="/layout" component="RouterLink" class="menu-item">
-          <v-list-item-title>Profile</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/doggo" component="RouterLink" class="menu-item">
-          <v-list-item-title>Dashboard</v-list-item-title>
-        </v-list-item>
-        <v-divider></v-divider>
-        <v-list-item @click="toggleConsult" class="menu-item">
-          <v-list-item-title>Consult</v-list-item-title>
-        </v-list-item>
-        <v-list-item v-if="consultOpen" @click="toggleType" class="menu-item">
-          <v-list-item-title>Type</v-list-item-title>
-        </v-list-item>
-        <v-list-item v-if="typeOpen" to="/symptomscat" component="RouterLink" class="menu-item">
-          <v-list-item-title>Cat</v-list-item-title>
-        </v-list-item>
-        <v-list-item v-if="typeOpen" to="/symptomsdog" component="RouterLink" class="menu-item">
-          <v-list-item-title>Dog</v-list-item-title>
-        </v-list-item>
-        <v-divider></v-divider>
-        <v-list-item to="/contact" component="RouterLink" class="menu-item">
-          <v-list-item-title>Contact Us</v-list-item-title>
-        </v-list-item>
-        <v-divider></v-divider>
-        <v-list-item
-          @click="onLogout"
-          class="menu-item"
-          :loading="formAction.formProcess"
-          :disabled="formAction.formProcess"
-        >
-          <v-list-item-title>Sign Out</v-list-item-title>
-        </v-list-item>
-        <v-card class="date-time-card mt-5" style="padding: 16px; text-align: center">
-          <v-card-title class="text-h6">Current Date and Time</v-card-title>
-          <v-card-subtitle>
-            <div>{{ currentTime }}</div>
-          </v-card-subtitle>
-        </v-card>
-      </v-list>
-    </v-navigation-drawer>
-
     <v-main>
-      <v-navigation-drawer app permanent width="250">
+      <v-navigation-drawer v-model="drawer" app permanent width="250">
         <v-container class="text-center mt-4">
           <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
           <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
         </v-container>
-
         <v-list dense>
           <v-list-item to="/layout" component="RouterLink" class="menu-item">
             <v-list-item-title>Profile</v-list-item-title>
           </v-list-item>
-
           <v-list-item to="/doggo" component="RouterLink" class="menu-item">
             <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
-
           <v-divider></v-divider>
-
-          <!-- Consult toggle -->
-          <v-list-item @click="setMenu('consult')" class="menu-item">
+          <v-list-item @click="toggleConsult" class="menu-item">
             <v-list-item-title>Consult</v-list-item-title>
           </v-list-item>
-
-          <!-- Type Menu -->
-          <v-list-item
-            v-if="activeMenu === 'consult'"
-            @click="setMenu('type')"
-            class="menu-item sub-menu"
-            :class="{ active: activeMenu === 'type' }"
-          >
-            <v-list-item-title>
-              Type
-              <v-icon v-if="activeMenu === 'type'" small class="ml-2">mdi-chevron-down</v-icon>
-            </v-list-item-title>
+          <v-list-item v-if="consultOpen" @click="toggleType" class="menu-item">
+            <v-list-item-title>Type</v-list-item-title>
           </v-list-item>
-
-          <!-- Cat -->
-          <v-list-item
-            v-if="activeMenu === 'type'"
-            to="/symptomscat"
-            component="RouterLink"
-            class="menu-item sub-sub-menu"
-            :class="{ active: activeMenu === 'cat' }"
-            @click="setMenu('cat')"
-          >
-            <v-icon left>mdi-cat</v-icon>
+          <v-list-item v-if="typeOpen" to="/symptomscat" component="RouterLink" class="menu-item">
             <v-list-item-title>Cat</v-list-item-title>
           </v-list-item>
-
-          <!-- Dog -->
-          <v-list-item
-            v-if="activeMenu === 'type'"
-            to="/symptomsdog"
-            component="RouterLink"
-            class="menu-item sub-sub-menu"
-            :class="{ active: activeMenu === 'dog' }"
-            @click="setMenu('dog')"
-          >
-            <v-icon left>mdi-dog</v-icon>
+          <v-list-item v-if="typeOpen" to="/symptomsdog" component="RouterLink" class="menu-item">
             <v-list-item-title>Dog</v-list-item-title>
           </v-list-item>
-
           <v-divider></v-divider>
-
           <v-list-item to="/contact" component="RouterLink" class="menu-item">
             <v-list-item-title>Contact Us</v-list-item-title>
           </v-list-item>
-
           <v-divider></v-divider>
-
           <v-list-item
             @click="onLogout"
             class="menu-item"
@@ -220,7 +133,6 @@ const symptoms = [
           >
             <v-list-item-title>Sign Out</v-list-item-title>
           </v-list-item>
-
           <v-card class="date-time-card mt-5" style="padding: 16px; text-align: center">
             <v-card-title class="text-h6">Current Date and Time</v-card-title>
             <v-card-subtitle>

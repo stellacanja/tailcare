@@ -2,15 +2,32 @@
 import { ref, watch, watchEffect, computed } from 'vue'
 import imgWel from '@/assets/images/welcome.png'
 import imgCatt from '@/assets/images/catt.gif'
+import { supabase, formActionDefault } from '@/utils/supabase'
+import { useRouter } from 'vue-router'
 
 // Sidebar toggle
 const drawer = ref(true)
-
+const router = useRouter()
 // Theme setup
 const theme = ref('light')
 const consultOpen = ref(false)
 const typeOpen = ref(false)
 const currentTime = ref(new Date().toLocaleString())
+const formAction = ref({ ...formActionDefault })
+
+const onLogout = async () => {
+  formAction.value = { ...formActionDefault, formProcess: true }
+
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.error('Error during logout:', error)
+    formAction.value.formProcess = false
+    return
+  }
+
+  formAction.value.formProcess = false
+  router.replace('/')
+}
 
 const themes = {
   light: { '--second-column-bg': '#f5d5e0' },
@@ -216,7 +233,6 @@ const showTipsSection = computed(() => {
           <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
         </v-container>
 
-        ```
         <v-list dense>
           <v-list-item to="/layout" component="RouterLink" class="menu-item">
             <v-list-item-title>Profile</v-list-item-title>
@@ -292,7 +308,12 @@ const showTipsSection = computed(() => {
 
           <v-divider></v-divider>
 
-          <v-list-item @click="signOut" class="menu-item">
+          <v-list-item
+            @click="onLogout"
+            class="menu-item"
+            :loading="formAction.formProcess"
+            :disabled="formAction.formProcess"
+          >
             <v-list-item-title>Sign Out</v-list-item-title>
           </v-list-item>
 

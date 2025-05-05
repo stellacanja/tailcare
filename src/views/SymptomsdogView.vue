@@ -2,8 +2,27 @@
 import { ref, watch, watchEffect, computed } from 'vue'
 import imgWel from '@/assets/images/welcome.png'
 import imgType from '@/assets/images/type.gif'
+import { useRouter } from 'vue-router'
+import { supabase, formActionDefault } from '@/utils/supabase'
+
+const router = useRouter()
+
+const onLogout = async () => {
+  formAction.value = { ...formActionDefault, formProcess: true }
+
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.error('Error during logout:', error)
+    formAction.value.formProcess = false
+    return
+  }
+
+  formAction.value.formProcess = false
+  router.replace('/')
+}
 
 // Theme setup
+const formAction = ref({ ...formActionDefault })
 const theme = ref('light')
 const consultOpen = ref(false)
 const typeOpen = ref(false)
@@ -297,7 +316,12 @@ const showTipsSection = computed(() => {
 
           <v-divider></v-divider>
 
-          <v-list-item @click="signOut" class="menu-item">
+          <v-list-item
+            @click="onLogout"
+            class="menu-item"
+            :loading="formAction.formProcess"
+            :disabled="formAction.formProcess"
+          >
             <v-list-item-title>Sign Out</v-list-item-title>
           </v-list-item>
 
@@ -310,24 +334,22 @@ const showTipsSection = computed(() => {
         </v-list>
       </v-navigation-drawer>
 
-<<<<<<< HEAD
       <!-- Main Section -->
-=======
+
       <!-- Toggle Button -->
       <v-btn icon @click="drawerOpen = !drawerOpen" class="ma-2">
         <v-icon>mdi-menu</v-icon>
       </v-btn>
       <!-- Main Section with Checkboxes and Image -->
->>>>>>> 974fa9d1a6ee9928ff1e8f2a5ccb45384a06e6c4
+
       <v-container fluid style="max-height: calc(100vh - 80px); overflow-y: auto">
         <v-row>
           <v-col cols="12" class="second-column-background">
             <v-row>
-<<<<<<< HEAD
               <!-- Symptoms -->
-=======
+
               <!-- Symptoms List -->
->>>>>>> 974fa9d1a6ee9928ff1e8f2a5ccb45384a06e6c4
+
               <v-col cols="12" md="5">
                 <v-card class="pa-6" style="height: 500px; overflow-y: auto">
                   <v-row>
