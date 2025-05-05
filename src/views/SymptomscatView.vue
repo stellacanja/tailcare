@@ -3,6 +3,9 @@ import { ref, watch, watchEffect } from 'vue'
 import imgWel from '@/assets/images/welcome.png'
 import imgCatt from '@/assets/images/catt.gif'
 
+// Sidebar toggle
+const drawer = ref(true)
+
 // Theme setup
 const theme = ref('light')
 const consultOpen = ref(false)
@@ -102,7 +105,7 @@ watch(ex4, () => {
   <v-app>
     <v-main>
       <!-- Sidebar -->
-      <v-navigation-drawer app permanent width="250">
+      <v-navigation-drawer v-model="drawer" app permanent width="250">
         <v-container class="text-center mt-4">
           <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
           <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
@@ -160,6 +163,11 @@ watch(ex4, () => {
           </v-card>
         </v-list>
       </v-navigation-drawer>
+
+      <!-- Toggle Button -->
+      <v-btn icon @click="drawer = !drawer" class="ma-2">
+        <v-icon>mdi-menu</v-icon>
+      </v-btn>
 
       <!-- Main Section -->
       <v-container fluid style="max-height: calc(100vh - 80px); overflow-y: auto">

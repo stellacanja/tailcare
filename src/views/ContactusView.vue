@@ -9,10 +9,10 @@ import { useRouter } from 'vue-router'
 import { supabase, formActionDefault } from '@/utils/supabase'
 
 const router = useRouter()
-// Theme setup
 const theme = ref('light')
 const consultOpen = ref(false)
 const typeOpen = ref(false)
+const drawer = ref(true) // sidebar toggle
 const currentTime = ref(new Date().toLocaleString())
 const formAction = ref({ ...formActionDefault })
 
@@ -24,14 +24,12 @@ const themes = {
 
 const onLogout = async () => {
   formAction.value = { ...formActionDefault, formProcess: true }
-
   const { error } = await supabase.auth.signOut()
   if (error) {
     console.error('Error during logout:', error)
     formAction.value.formProcess = false
     return
   }
-
   formAction.value.formProcess = false
   router.replace('/')
 }
@@ -46,10 +44,6 @@ watchEffect(() => {
     document.documentElement.style.setProperty(key, selectedTheme[key])
   })
 })
-
-function signOut() {
-  alert('Signed out!')
-}
 
 function toggleConsult() {
   consultOpen.value = !consultOpen.value
@@ -90,71 +84,61 @@ const symptoms = [
 
 <template>
   <v-app>
+    <!-- App Bar -->
+    <v-app-bar app color="var(--navbar-bg)">
+      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-toolbar-title>TailCare</v-toolbar-title>
+    </v-app-bar>
+
+    <v-navigation-drawer v-model="drawer" app permanent width="250">
+      <v-container class="text-center mt-4">
+        <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
+        <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
+      </v-container>
+      <v-list dense>
+        <v-list-item to="/layout" component="RouterLink" class="menu-item">
+          <v-list-item-title>Profile</v-list-item-title>
+        </v-list-item>
+        <v-list-item to="/doggo" component="RouterLink" class="menu-item">
+          <v-list-item-title>Dashboard</v-list-item-title>
+        </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item @click="toggleConsult" class="menu-item">
+          <v-list-item-title>Consult</v-list-item-title>
+        </v-list-item>
+        <v-list-item v-if="consultOpen" @click="toggleType" class="menu-item">
+          <v-list-item-title>Type</v-list-item-title>
+        </v-list-item>
+        <v-list-item v-if="typeOpen" to="/symptomscat" component="RouterLink" class="menu-item">
+          <v-list-item-title>Cat</v-list-item-title>
+        </v-list-item>
+        <v-list-item v-if="typeOpen" to="/symptomsdog" component="RouterLink" class="menu-item">
+          <v-list-item-title>Dog</v-list-item-title>
+        </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item to="/contact" component="RouterLink" class="menu-item">
+          <v-list-item-title>Contact Us</v-list-item-title>
+        </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item
+          @click="onLogout"
+          class="menu-item"
+          :loading="formAction.formProcess"
+          :disabled="formAction.formProcess"
+        >
+          <v-list-item-title>Sign Out</v-list-item-title>
+        </v-list-item>
+        <v-card class="date-time-card mt-5" style="padding: 16px; text-align: center">
+          <v-card-title class="text-h6">Current Date and Time</v-card-title>
+          <v-card-subtitle>
+            <div>{{ currentTime }}</div>
+          </v-card-subtitle>
+        </v-card>
+      </v-list>
+    </v-navigation-drawer>
+
     <v-main>
-      <!-- Sidebar -->
-      <v-navigation-drawer app permanent width="250">
-        <v-container class="text-center mt-4">
-          <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
-          <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
-        </v-container>
-
-        <v-list dense>
-          <v-list-item to="/layout" component="RouterLink" class="menu-item">
-            <v-list-item-title>Profile</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item to="/doggo" component="RouterLink" class="menu-item">
-            <v-list-item-title>Dashboard</v-list-item-title>
-          </v-list-item>
-
-          <v-divider></v-divider>
-
-          <v-list-item @click="toggleConsult" class="menu-item">
-            <v-list-item-title>Consult</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item v-if="consultOpen" @click="toggleType" class="menu-item">
-            <v-list-item-title>Type</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item v-if="typeOpen" to="/symptomscat" component="RouterLink" class="menu-item">
-            <v-list-item-title>Cat</v-list-item-title>
-          </v-list-item>
-          <v-list-item v-if="typeOpen" to="/symptomsdog" component="RouterLink" class="menu-item">
-            <v-list-item-title>Dog</v-list-item-title>
-          </v-list-item>
-
-          <v-divider></v-divider>
-
-          <v-list-item to="/contact" component="RouterLink" class="menu-item">
-            <v-list-item-title>Contact Us</v-list-item-title>
-          </v-list-item>
-
-          <v-divider></v-divider>
-
-          <v-divider></v-divider>
-
-          <v-list-item
-            @click="onLogout"
-            class="menu-item"
-            :loading="formAction.formProcess"
-            :disabled="formAction.formProcess"
-          >
-            <v-list-item-title>Sign Out</v-list-item-title>
-          </v-list-item>
-
-          <v-card class="date-time-card mt-5" style="padding: 16px; text-align: center">
-            <v-card-title class="text-h6">Current Date and Time</v-card-title>
-            <v-card-subtitle>
-              <div>{{ currentTime }}</div>
-            </v-card-subtitle>
-          </v-card>
-        </v-list>
-      </v-navigation-drawer>
-
-      <!-- Main Section with Contact Us Content -->
       <v-container fluid class="pa-0">
-        <!-- Hero Section with Background Image -->
         <div
           :style="{
             backgroundImage: `url(${imgContact})`,
@@ -178,10 +162,8 @@ const symptoms = [
           </p>
         </div>
 
-        <!-- Contact Info Cards -->
         <v-container class="mt-10">
           <v-row dense justify="center" align="center">
-            <!-- Facebook Section -->
             <v-col cols="12" md="4" class="text-center">
               <v-card elevation="0">
                 <v-card-text>
@@ -207,7 +189,6 @@ const symptoms = [
               </v-card>
             </v-col>
 
-            <!-- Instagram Section -->
             <v-col cols="12" md="4" class="text-center">
               <v-card elevation="0">
                 <v-card-text>
@@ -233,7 +214,6 @@ const symptoms = [
               </v-card>
             </v-col>
 
-            <!-- Email Section -->
             <v-col cols="12" md="4" class="text-center">
               <v-card elevation="0">
                 <v-card-text>
@@ -255,7 +235,6 @@ const symptoms = [
       </v-container>
     </v-main>
 
-    <!-- Footer -->
     <v-footer border app class="justify-center" style="background-color: #f4f5f7">
       TailCare@2025
     </v-footer>
@@ -264,15 +243,9 @@ const symptoms = [
 
 <style scoped>
 :root {
-  --second-column-bg: #f5d5e0;
-}
-
-[data-theme='dark'] {
-  --second-column-bg: #210635;
-}
-
-[data-theme='custom'] {
-  --second-column-bg: #42od4b;
+  --navbar-bg: #f5d5e0;
+  --card-bg: #ffffff;
+  --text-color: #000000;
 }
 
 .custom-title {
@@ -294,28 +267,23 @@ const symptoms = [
   background-color: #efefef;
 }
 
-body {
-  font-family: 'Roboto', sans-serif;
-}
-
 .date-time-card {
-  background-color: #d391b0;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: 180px;
-  margin-top: 16px;
-}
-
-.date-time-card .text-h6,
-.date-time-card .v-card-subtitle {
-  color: #5d3c64;
-  font-family: 'Roboto', sans-serif;
-  font-weight: bold;
-  font-size: 18px;
+  background-color: #ffcccb;
+  border-radius: 10px;
 }
 
 .second-column-background {
-  background-color: var(--second-column-bg);
+  background-color: #f7f0fa;
+  border-radius: 10px;
+}
+
+.video-card {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.video-card .v-card-title {
+  font-size: 18px;
+  font-weight: bold;
 }
 </style>
 

@@ -19,6 +19,7 @@ import imgDog5 from '@/assets/images/avatar dog/dog5.png'
 
 const router = useRouter()
 
+const drawer = ref(true)
 const theme = ref('light')
 const consultOpen = ref(false)
 const typeOpen = ref(false)
@@ -117,14 +118,31 @@ onMounted(() => {
 
 <template>
   <v-app>
+    <v-app-bar app color="var(--navbar-bg)" height="64">
+      <v-btn icon @click="drawer = !drawer">
+        <v-icon>{{ drawer ? 'mdi-menu-open' : 'mdi-menu' }}</v-icon>
+      </v-btn>
+      <v-toolbar-title class="text-h6 ml-2">
+        <span v-if="drawer">TailCare</span>
+        <v-icon v-else>mdi-paw</v-icon>
+      </v-toolbar-title>
+    </v-app-bar>
+
     <!-- Sidebar -->
-    <v-navigation-drawer app permanent width="250">
+    <v-navigation-drawer
+      v-model="drawer"
+      :mini-variant="!drawer && $vuetify.display.mdAndUp"
+      :permanent="$vuetify.display.mdAndUp"
+      :temporary="!$vuetify.display.mdAndUp"
+      app
+      width="250"
+      mini-variant-width="56"
+    >
       <v-container class="text-center mt-4">
-        <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
-        <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
+        <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" v-if="drawer" />
+        <h1 class="text-h5 font-weight-bold custom-title" v-if="drawer">Welcome Owner</h1>
       </v-container>
 
-      ```
       <v-list dense>
         <v-list-item to="/layout" component="RouterLink" class="menu-item">
           <v-list-item-title>Profile</v-list-item-title>
@@ -254,7 +272,6 @@ onMounted(() => {
         </v-card>
       </v-dialog>
     </v-main>
-    ```
   </v-app>
 </template>
 
@@ -267,7 +284,6 @@ onMounted(() => {
 .main-background {
   background-color: var(--background-color);
   min-height: 100vh;
-  padding-left: 250px;
 }
 
 .custom-title {

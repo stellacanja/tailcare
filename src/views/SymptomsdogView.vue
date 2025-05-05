@@ -8,6 +8,8 @@ const theme = ref('light')
 const consultOpen = ref(false)
 const typeOpen = ref(false)
 const currentTime = ref(new Date().toLocaleString())
+// Add this to control sidebar visibility
+const drawerOpen = ref(true)
 
 const themes = {
   light: { '--second-column-bg': '#f5d5e0' },
@@ -45,7 +47,7 @@ function updateTime() {
 }
 updateTime()
 
-const ex4 = ref([])
+const ex4 = ref([]) // Symptoms list selection
 const possibleIllnesses = ref([])
 
 const symptoms = [
@@ -102,7 +104,7 @@ watchEffect(() => {
   <v-app>
     <v-main>
       <!-- Sidebar -->
-      <v-navigation-drawer app permanent width="250">
+      <v-navigation-drawer v-model="drawerOpen" app permanent width="250">
         <v-container class="text-center mt-4">
           <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
           <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
@@ -161,12 +163,16 @@ watchEffect(() => {
         </v-list>
       </v-navigation-drawer>
 
+      <!-- Toggle Button -->
+      <v-btn icon @click="drawerOpen = !drawerOpen" class="ma-2">
+        <v-icon>mdi-menu</v-icon>
+      </v-btn>
       <!-- Main Section with Checkboxes and Image -->
       <v-container fluid style="max-height: calc(100vh - 80px); overflow-y: auto">
         <v-row>
           <v-col cols="12" class="second-column-background">
             <v-row>
-              <!-- Symptoms List (Same as in second code) -->
+              <!-- Symptoms List -->
               <v-col cols="12" md="5">
                 <v-card class="pa-6" style="height: 500px; overflow-y: auto">
                   <v-row>
@@ -177,7 +183,7 @@ watchEffect(() => {
                 </v-card>
               </v-col>
 
-              <!-- Image Section (Replaced with imgType from second code) -->
+              <!-- Image Section -->
               <v-col cols="12" md="7" class="d-flex justify-center align-center">
                 <img :src="imgType" alt="Dog Gif" style="height: 500px; width: auto" />
               </v-col>
@@ -218,7 +224,7 @@ watchEffect(() => {
 }
 
 [data-theme='custom'] {
-  --second-column-bg: #74b0ff;
+  --second-column-bg: #42od4b;
 }
 
 .custom-title {
@@ -245,7 +251,7 @@ body {
 }
 
 .date-time-card {
-  background-color: #dfb6b2;
+  background-color: #d391b0;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   height: 180px;
@@ -304,9 +310,5 @@ body {
   color: #4e4e4e;
   line-height: 1.5;
 }
+/* Add your styles here */
 </style>
-
-<link
-  href="https://fonts.googleapis.com/css2?family=Lora:wght@700&family=Roboto:wght@400&display=swap"
-  rel="stylesheet"
-/>
