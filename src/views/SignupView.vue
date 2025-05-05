@@ -5,6 +5,7 @@ import {
   passwordValidator,
   confirmedValidator,
 } from '@/utils/validators'
+
 import { ref } from 'vue'
 import AlertNotification from '../../common/AlertNotification.vue'
 import { supabase, formActionDefault } from '@/utils/supabase.js'
@@ -14,7 +15,10 @@ import imgEmail from '@/assets/images/email.png'
 import imgFb from '@/assets/images/fb.png'
 import imgInsta from '@/assets/images/insta.png'
 
+
 // Reactive form state
+
+
 const formDataDefault = {
   username: '',
   email: '',
@@ -26,7 +30,13 @@ const formData = ref({ ...formDataDefault })
 const formAction = ref({ ...formActionDefault })
 const refVForm = ref()
 
+
 // Submit logic
+
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+
+
 const onSubmit = async () => {
   formAction.value = { ...formActionDefault }
   formAction.value.formProcess = true
@@ -109,8 +119,10 @@ const onFormSubmit = () => {
                     type="email"
                     :rules="[requiredValidator, emailValidator]"
                   />
+
                   <v-text-field
                     v-model="formData.password"
+
                     variant="solo-inverted"
                     label="Create Password"
                     type="password"
@@ -128,8 +140,55 @@ const onFormSubmit = () => {
                       confirmedValidator(formData.confirmPassword, formData.password),
                     ]"
                   />
+
+                    :type="showPassword ? 'text' : 'password'"
+                    variant="solo-inverted"
+                    label="Create Password"
+                    prepend-inner-icon="mdi-lock"
+                    :rules="[requiredValidator, passwordValidator]"
+                  >
+                    <template #append-inner>
+                      <v-fade-transition>
+                        <v-icon
+                          :key="showPassword"
+                          class="mr-2"
+                          @click="showPassword = !showPassword"
+                          style="cursor: pointer"
+                        >
+                          {{ showPassword ? 'mdi-eye-off' : 'mdi-eye' }}
+                        </v-icon>
+                      </v-fade-transition>
+                    </template>
+                  </v-text-field>
+
+                  <v-text-field
+                    v-model="formData.confirmPassword"
+                    :type="showConfirmPassword ? 'text' : 'password'"
+                    variant="solo-inverted"
+                    label="Confirm Password"
+                    prepend-inner-icon="mdi-lock-check"
+                    :rules="[
+                      requiredValidator,
+                      confirmedValidator(formData.password),
+                    ]"
+                  >
+                    <template #append-inner>
+                      <v-fade-transition>
+                        <v-icon
+                          :key="showConfirmPassword"
+                          class="mr-2"
+                          @click="showConfirmPassword = !showConfirmPassword"
+                          style="cursor: pointer"
+                        >
+                          {{ showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye' }}
+                        </v-icon>
+                      </v-fade-transition>
+                    </template>
+                  </v-text-field>
+
+
                   <v-btn
-                    class="mt-2"
+                    class="mt-4"
                     type="submit"
                     style="background-color: skyblue"
                     block
