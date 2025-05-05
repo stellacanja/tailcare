@@ -15,9 +15,7 @@ import imgEmail from '@/assets/images/email.png'
 import imgFb from '@/assets/images/fb.png'
 import imgInsta from '@/assets/images/insta.png'
 
-
 // Reactive form state
-
 
 const formDataDefault = {
   username: '',
@@ -30,12 +28,10 @@ const formData = ref({ ...formDataDefault })
 const formAction = ref({ ...formActionDefault })
 const refVForm = ref()
 
-
 // Submit logic
 
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
-
 
 const onSubmit = async () => {
   formAction.value = { ...formActionDefault }
@@ -122,7 +118,6 @@ const onFormSubmit = () => {
 
                   <v-text-field
                     v-model="formData.password"
-
                     variant="solo-inverted"
                     label="Create Password"
                     type="password"
@@ -140,7 +135,8 @@ const onFormSubmit = () => {
                       confirmedValidator(formData.confirmPassword, formData.password),
                     ]"
                   />
-
+                  <v-text-field
+                    v-model="formData.password"
                     :type="showPassword ? 'text' : 'password'"
                     variant="solo-inverted"
                     label="Create Password"
@@ -167,10 +163,7 @@ const onFormSubmit = () => {
                     variant="solo-inverted"
                     label="Confirm Password"
                     prepend-inner-icon="mdi-lock-check"
-                    :rules="[
-                      requiredValidator,
-                      confirmedValidator(formData.password),
-                    ]"
+                    :rules="[requiredValidator, confirmedValidator(formData.password)]"
                   >
                     <template #append-inner>
                       <v-fade-transition>
@@ -185,7 +178,6 @@ const onFormSubmit = () => {
                       </v-fade-transition>
                     </template>
                   </v-text-field>
-
 
                   <v-btn
                     class="mt-4"
