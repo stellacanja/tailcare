@@ -1,22 +1,39 @@
 <script setup>
 import { ref, watchEffect } from 'vue'
 import imgWel from '@/assets/images/welcome.png'
-import imgCatt from '@/assets/images/catt.gif'
 import imgContact from '@/assets/images/contact.png'
 import imgFb from '@/assets/images/fb.png'
 import imgInsta from '@/assets/images/insta.png'
 import imgEmail from '@/assets/images/email.png'
+import { useRouter } from 'vue-router'
+import { supabase, formActionDefault } from '@/utils/supabase'
 
+const router = useRouter()
 // Theme setup
 const theme = ref('light')
 const consultOpen = ref(false)
 const typeOpen = ref(false)
 const currentTime = ref(new Date().toLocaleString())
+const formAction = ref({ ...formActionDefault })
 
 const themes = {
   light: { '--second-column-bg': '#f5d5e0' },
   dark: { '--second-column-bg': '#210635' },
   custom: { '--second-column-bg': '#42od4b' },
+}
+
+const onLogout = async () => {
+  formAction.value = { ...formActionDefault, formProcess: true }
+
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.error('Error during logout:', error)
+    formAction.value.formProcess = false
+    return
+  }
+
+  formAction.value.formProcess = false
+  router.replace('/')
 }
 
 function changeTheme() {
@@ -117,7 +134,12 @@ const symptoms = [
 
           <v-divider></v-divider>
 
-          <v-list-item @click="signOut" class="menu-item">
+          <v-list-item
+            @click="onLogout"
+            class="menu-item"
+            :loading="formAction.formProcess"
+            :disabled="formAction.formProcess"
+          >
             <v-list-item-title>Sign Out</v-list-item-title>
           </v-list-item>
 

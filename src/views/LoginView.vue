@@ -6,10 +6,15 @@ import imgWel from '@/assets/images/welcome.png'
 import imgEmail from '@/assets/images/email.png'
 import imgFb from '@/assets/images/fb.png'
 import imgInsta from '@/assets/images/insta.png'
+import { formActionDefault, supabase } from '@/utils/supabase'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const refVForm = ref()
 const showPassword = ref(false)
 
+// Set up default form data
 const formDataDefault = {
   email: '',
   password: '',
@@ -17,8 +22,31 @@ const formDataDefault = {
 
 const formData = ref({ ...formDataDefault })
 
-const onSubmit = () => {
-  alert('Email: ${formData.value.email}\nPassword: ${formData.value.password}')
+const formAction = ref({
+  ...formActionDefault,
+})
+
+const onSubmit = async () => {
+  formAction.value = { ...formActionDefault }
+  formAction.value.formProcess = true
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: formData.value.email,
+    password: formData.value.password,
+  })
+
+  if (error) {
+    console.error(error)
+    formAction.value.formErrorMessage = error.message
+    formAction.value.formStatus = error.status
+  } else if (data) {
+    console.log(data)
+    formAction.value.formSuccessMessage = 'Successfully Logged In'
+    router.replace('/doggo')
+    refVForm.value?.reset()
+  }
+
+  formAction.value.formProcess = false
 }
 
 const onFormSubmit = () => {
@@ -98,13 +126,7 @@ const onFormSubmit = () => {
                     </v-text-field>
 
                     <!-- Submit Button -->
-                    <v-btn
-                      class="mt-4"
-                      style="background-color: skyblue"
-                      type="submit"
-                      block
-                      to="/doggo"
-                    >
+                    <v-btn class="mt-4" style="background-color: skyblue" type="submit" block>
                       Log in
                     </v-btn>
                   </v-form>
