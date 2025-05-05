@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watchEffect } from 'vue'
 import imgWel from '@/assets/images/welcome.png'
-import imgCatt from '@/assets/images/catt.gif'
 import imgType from '@/assets/images/type.gif'
 
 // Theme setup
@@ -47,6 +46,8 @@ function updateTime() {
 updateTime()
 
 const ex4 = ref([])
+const possibleIllnesses = ref([])
+
 const symptoms = [
   'Lethargy (low energy)',
   'Loss of appetite',
@@ -65,7 +66,38 @@ const symptoms = [
   'Pale gums',
   'Shivering or trembling',
 ]
+
+const symptomIllnessMap = {
+  'Lethargy (low energy)': ['Infection', 'Arthritis'],
+  'Vomiting': ['Parvovirus', 'Food Poisoning'],
+  'Diarrhea': ['Worms', 'Dietary Indiscretion'],
+  'Coughing': ['Kennel Cough', 'Heart Disease'],
+  'Sneezing': ['Allergies', 'Upper Respiratory Infection'],
+  'Loss of appetite': ['Dental Problems', 'Gastrointestinal Disease'],
+  'Weight loss': ['Cancer', 'Parasites'],
+  'Difficulty breathing': ['Heartworm', 'Pneumonia'],
+  'Fever': ['Infection', 'Inflammation'],
+  'Nasal discharge': ['Cold', 'Respiratory Infection'],
+  'Dehydration': ['Heatstroke', 'Kidney Disease'],
+  'Weakness': ['Anemia', 'Chronic Disease'],
+  'Abdominal pain': ['Bloating', 'Pancreatitis'],
+  'Excessive drooling': ['Oral Injury', 'Toxin Exposure'],
+  'Pale gums': ['Shock', 'Severe Anemia'],
+  'Shivering or trembling': ['Pain', 'Anxiety'],
+}
+
+watchEffect(() => {
+  const illnesses = new Set()
+  ex4.value.forEach((symptom) => {
+    const matched = symptomIllnessMap[symptom]
+    if (matched) {
+      matched.forEach((illness) => illnesses.add(illness))
+    }
+  })
+  possibleIllnesses.value = Array.from(illnesses)
+})
 </script>
+
 
 <template>
   <v-app>
@@ -149,6 +181,25 @@ const symptoms = [
             </v-row>
           </v-col>
         </v-row>
+         <!-- New Illness Row -->
+         <v-row v-if="possibleIllnesses.length" class="mt-6 d-flex justify-center">
+          <v-col cols="12" md="8">
+            <v-card class="symptom-card">
+              <v-card-title class="symptom-title">Possible Illnesses</v-card-title>
+              <v-card-text>
+                <v-chip
+                  v-for="(illness, index) in possibleIllnesses"
+                  :key="index"
+                  color="pink lighten-4"
+                  class="ma-2"
+                  label
+                >
+                  {{ illness }}
+                </v-chip>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
   </v-app>
@@ -208,6 +259,47 @@ body {
 
 .second-column-background {
   background-color: var(--second-column-bg);
+}
+
+.symptom-card {
+  border-radius: 12px;
+  padding: 24px;
+  background-color: #fff9fc;
+  border: 1px solid #f0d7e9;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.symptom-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.symptom-title {
+  font-family: 'Lora', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #7b466a;
+}
+
+.symptom-description {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #595959;
+  line-height: 1.5;
+}
+
+.symptom-suggestion-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: #5d3c64;
+}
+
+.symptom-suggestion {
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  color: #4e4e4e;
+  line-height: 1.5;
 }
 </style>
 

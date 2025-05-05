@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import imgWel from '@/assets/images/welcome.png'
 import imgCatt from '@/assets/images/catt.gif'
 
@@ -46,6 +46,8 @@ function updateTime() {
 updateTime()
 
 const ex4 = ref([])
+const possibleIllnesses = ref([])
+
 const symptoms = [
   'Lethargy',
   'Loss of appetite (anorexia)',
@@ -64,6 +66,36 @@ const symptoms = [
   'Hiding behavior',
   'Changes in urination',
 ]
+
+const symptomIllnessMap = {
+  Lethargy: ['Anemia', 'Infection'],
+  'Loss of appetite (anorexia)': ['Gastroenteritis', 'Kidney Disease'],
+  Vomiting: ['Food Allergy', 'Parvovirus'],
+  Diarrhea: ['Food Intolerance', 'Parasites'],
+  Sneezing: ['Upper Respiratory Infection'],
+  Coughing: ['Kennel Cough'],
+  'Nasal/eye discharge': ['Feline Herpesvirus', 'Flu'],
+  Fever: ['Infection', 'Viral Illness'],
+  Dehydration: ['Diabetes', 'Heat Stroke'],
+  'Weight loss': ['Hyperthyroidism', 'Diabetes'],
+  'Labored breathing': ['Asthma', 'Heartworm'],
+  'Pale or yellow gums': ['Anemia', 'Liver Disease'],
+  'Excessive drooling': ['Dental Disease', 'Nausea'],
+  'Abdominal pain': ['Pancreatitis', 'Constipation'],
+  'Hiding behavior': ['Stress', 'Pain'],
+  'Changes in urination': ['UTI', 'Kidney Stones'],
+}
+
+watch(ex4, () => {
+  const illnesses = new Set()
+  ex4.value.forEach((symptom) => {
+    const matched = symptomIllnessMap[symptom]
+    if (matched) {
+      matched.forEach((illness) => illnesses.add(illness))
+    }
+  })
+  possibleIllnesses.value = Array.from(illnesses)
+})
 </script>
 
 <template>
@@ -125,7 +157,7 @@ const symptoms = [
         </v-list>
       </v-navigation-drawer>
 
-      <!-- Main Section with Checkboxes and Image -->
+      <!-- Main Section -->
       <v-container fluid style="max-height: calc(100vh - 80px); overflow-y: auto">
         <v-row>
           <v-col cols="12" class="second-column-background">
@@ -144,6 +176,26 @@ const symptoms = [
                 <img :src="imgCatt" alt="Cat Gif" style="height: 500px; width: auto" />
               </v-col>
             </v-row>
+          </v-col>
+        </v-row>
+
+        <!-- New Illness Row -->
+        <v-row v-if="possibleIllnesses.length" class="mt-6 d-flex justify-center">
+          <v-col cols="12" md="8">
+            <v-card class="symptom-card">
+              <v-card-title class="symptom-title">Possible Illnesses</v-card-title>
+              <v-card-text>
+                <v-chip
+                  v-for="(illness, index) in possibleIllnesses"
+                  :key="index"
+                  color="pink lighten-4"
+                  class="ma-2"
+                  label
+                >
+                  {{ illness }}
+                </v-chip>
+              </v-card-text>
+            </v-card>
           </v-col>
         </v-row>
       </v-container>
@@ -205,6 +257,47 @@ body {
 
 .second-column-background {
   background-color: var(--second-column-bg);
+}
+
+.symptom-card {
+  border-radius: 12px;
+  padding: 24px;
+  background-color: #fff9fc;
+  border: 1px solid #f0d7e9;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.symptom-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.symptom-title {
+  font-family: 'Lora', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #7b466a;
+}
+
+.symptom-description {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #595959;
+  line-height: 1.5;
+}
+
+.symptom-suggestion-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: #5d3c64;
+}
+
+.symptom-suggestion {
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  color: #4e4e4e;
+  line-height: 1.5;
 }
 </style>
 
