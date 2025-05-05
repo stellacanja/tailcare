@@ -1,45 +1,56 @@
 <script setup>
+import { supabase, formActionDefault } from '@/utils/supabase'
 import { ref, watchEffect } from 'vue'
-import imgDog from '@/assets/images/doggo.gif'
+import { useRouter } from 'vue-router'
 import imgWel from '@/assets/images/welcome.png'
+
+const router = useRouter()
 
 // Initializing theme and other states
 const theme = ref('light')
-const consultOpen = ref(false) // Toggles visibility of Consult section
-const typeOpen = ref(false) // Toggles visibility of the "Type" options (Cat and Dog)
+const consultOpen = ref(false)
+const typeOpen = ref(false)
 const currentTime = ref(new Date().toLocaleString())
+const formAction = ref({ ...formActionDefault })
 
-// Theme settings with the same colors as before
+// Theme settings
 const themes = {
   light: {
-    '--navbar-bg': '#f5d5e0', // Beige background
+    '--navbar-bg': '#f5d5e0',
   },
   dark: {
-    '--navbar-bg': '#210635', // Purple background
+    '--navbar-bg': '#210635',
   },
   custom: {
-    '--navbar-bg': '#42od4b', // Green background
+    '--navbar-bg': '#42od4b',
   },
 }
 
-// Function to change themes
-function changeTheme() {
+const changeTheme = () => {
   theme.value = theme.value === 'light' ? 'dark' : theme.value === 'dark' ? 'custom' : 'light'
 }
 
 watchEffect(() => {
   const selectedTheme = themes[theme.value]
-  Object.keys(selectedTheme).forEach((key) => {
-    document.documentElement.style.setProperty(key, selectedTheme[key])
+  Object.entries(selectedTheme).forEach(([key, value]) => {
+    document.documentElement.style.setProperty(key, value)
   })
 })
 
-// Function to simulate sign out
-function signOut() {
-  alert('Signed out!')
+const onLogout = async () => {
+  formAction.value = { ...formActionDefault, formProcess: true }
+
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.error('Error during logout:', error)
+    formAction.value.formProcess = false
+    return
+  }
+
+  formAction.value.formProcess = false
+  router.replace('/')
 }
 
-// Array of headline articles with titles, summaries, links, and images
 const headlines = ref([
   {
     title:
@@ -87,47 +98,25 @@ const headlines = ref([
   },
 ])
 
-// Function to open the links in a new tab
-function goToLink(url) {
-  window.open(url, '_blank')
-}
+const goToLink = (url) => window.open(url, '_blank')
+const toggleConsult = () => (consultOpen.value = !consultOpen.value)
+const toggleType = () => (typeOpen.value = !typeOpen.value)
 
-// Function to toggle consult section visibility
-function toggleConsult() {
-  consultOpen.value = !consultOpen.value
-}
-
-// Function to toggle type section visibility
-function toggleType() {
-  typeOpen.value = !typeOpen.value
-}
-
-// Update current time every second
-function updateTime() {
-  setInterval(() => {
-    currentTime.value = new Date().toLocaleString()
-  }, 1000)
-}
-
-updateTime()
+setInterval(() => {
+  currentTime.value = new Date().toLocaleString()
+}, 1000)
 </script>
 
 <template>
   <v-app>
-    <!-- Main Layout -->
     <v-main>
-      <!-- Sidebar with the image above options -->
       <v-navigation-drawer app permanent width="250">
-        <!--applayout-->
-
-        <!-- Welcome Image and Title -->
         <v-container class="text-center mt-4">
           <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
           <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
         </v-container>
 
         <v-list dense>
-          <!-- Dashboard Section -->
           <v-list-item to="/layout" component="RouterLink" class="menu-item">
             <v-list-item-title>Profile</v-list-item-title>
           </v-list-item>
@@ -137,17 +126,14 @@ updateTime()
 
           <v-divider></v-divider>
 
-          <!-- Consult Section -->
           <v-list-item @click="toggleConsult" class="menu-item">
             <v-list-item-title>Consult</v-list-item-title>
           </v-list-item>
 
-          <!-- Type option that appears only when Consult is clicked -->
           <v-list-item v-if="consultOpen" @click="toggleType" class="menu-item">
             <v-list-item-title>Type</v-list-item-title>
           </v-list-item>
 
-          <!-- Cat and Dog options appear only when Type is clicked -->
           <v-list-item v-if="typeOpen" to="/symptomscat" component="RouterLink" class="menu-item">
             <v-list-item-title>Cat</v-list-item-title>
           </v-list-item>
@@ -157,26 +143,27 @@ updateTime()
 
           <v-divider></v-divider>
 
-          <!-- Contact Us Section -->
           <v-list-item to="/contact" component="RouterLink" class="menu-item">
             <v-list-item-title>Contact Us</v-list-item-title>
           </v-list-item>
 
           <v-divider></v-divider>
 
-          <!-- Change Theme Section -->
           <v-list-item @click="changeTheme" class="menu-item">
             <v-list-item-title>Change Theme</v-list-item-title>
           </v-list-item>
 
           <v-divider></v-divider>
 
-          <!-- Sign Out Section -->
-          <v-list-item @click="signOut" class="menu-item">
+          <v-list-item
+            @click="onLogout"
+            class="menu-item"
+            :loading="formAction.formProcess"
+            :disabled="formAction.formProcess"
+          >
             <v-list-item-title>Sign Out</v-list-item-title>
           </v-list-item>
 
-          <!-- Date & Time Card -->
           <v-card class="date-time-card mt-5" style="padding: 16px; text-align: center">
             <v-card-title class="text-h6">Current Date and Time</v-card-title>
             <v-card-subtitle>
@@ -187,7 +174,6 @@ updateTime()
       </v-navigation-drawer>
 
       <v-container fluid style="max-height: calc(100vh - 80px); overflow-y: auto">
-        <!-- Headlines section with 'Pet News and Facts' as header -->
         <v-row>
           <v-col cols="12" class="second-column-background">
             <v-card class="pa-4" hover>
@@ -211,7 +197,6 @@ updateTime()
           </v-col>
         </v-row>
 
-        <!-- Video Card Section -->
         <v-card max-width="800" class="video-card mx-auto mt-5">
           <v-card-title class="text-h6">Watch Our Intro Video</v-card-title>
           <v-card-subtitle>
@@ -235,18 +220,17 @@ updateTime()
 
 <style scoped>
 :root {
-  --navbar-bg: #f5d5e0; /* Beige color */
+  --navbar-bg: #f5d5e0;
 }
 
 [data-theme='dark'] {
-  --navbar-bg: #210635; /* Purple color */
+  --navbar-bg: #210635;
 }
 
 [data-theme='custom'] {
-  --navbar-bg: #42od4b; /* Green color */
+  --navbar-bg: #42od4b;
 }
 
-/* Custom font for the Welcome Owner and Pet News titles */
 .custom-title {
   font-family: 'Lora', serif;
   color: #7b466a;
@@ -254,7 +238,6 @@ updateTime()
   margin-bottom: 10px;
 }
 
-/* Style for menu items */
 .menu-item {
   padding: 16px 20px;
   margin-bottom: 12px;
@@ -267,24 +250,20 @@ updateTime()
   background-color: #efefef;
 }
 
-/* Optional: Global font for the main content */
 body {
   font-family: 'Lora', serif;
 }
 
-/* Optional: Date and time card styles */
 .date-time-card {
   background-color: #ffcccb;
   border-radius: 10px;
 }
 
-/* Second column background */
 .second-column-background {
   background-color: #f7f0fa;
   border-radius: 10px;
 }
 
-/* Video Card Styles */
 .video-card {
   background-color: #f2e6fa;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
