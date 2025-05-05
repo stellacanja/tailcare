@@ -118,6 +118,8 @@ updateTime()
     <v-main>
       <!-- Sidebar with the image above options -->
       <v-navigation-drawer app permanent width="250">
+        <!--applayout-->
+
         <!-- Welcome Image and Title -->
         <v-container class="text-center mt-4">
           <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
@@ -126,6 +128,9 @@ updateTime()
 
         <v-list dense>
           <!-- Dashboard Section -->
+          <v-list-item to="/layout" component="RouterLink" class="menu-item">
+            <v-list-item-title>Profile</v-list-item-title>
+          </v-list-item>
           <v-list-item class="menu-item">
             <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>

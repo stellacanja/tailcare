@@ -14,8 +14,11 @@ import imgWel from '@/assets/images/welcome.png'
 import imgEmail from '@/assets/images/email.png'
 import imgFb from '@/assets/images/fb.png'
 import imgInsta from '@/assets/images/insta.png'
+import { useRouter } from 'vue-router'
 
 // Reactive form state
+const router = useRouter()
+
 const formDataDefault = {
   username: '',
   email: '',
@@ -52,6 +55,7 @@ const onSubmit = async () => {
   } else if (data) {
     console.log(data)
     formAction.value.formSuccessMessage = 'Successfully Registered Account!'
+    router.replace('/doggo')
     refVForm.value?.reset()
   }
 
@@ -135,7 +139,7 @@ const onFormSubmit = () => {
                     </template>
                   </v-text-field>
 
-                  <!-- ✅ Modified Confirm Password -->
+                  <!--  Modified Confirm Password -->
                   <v-text-field
                     v-model="formData.confirmPassword"
                     :type="showConfirmPassword ? 'text' : 'password'"
