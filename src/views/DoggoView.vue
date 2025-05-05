@@ -17,12 +17,18 @@ const formAction = ref({ ...formActionDefault })
 const themes = {
   light: {
     '--navbar-bg': '#f5d5e0',
+    '--card-bg': '#ffffff',
+    '--text-color': '#000000',
   },
   dark: {
     '--navbar-bg': '#210635',
+    '--card-bg': '#2a0e42',
+    '--text-color': '#ffffff',
   },
   custom: {
-    '--navbar-bg': '#42od4b',
+    '--navbar-bg': '#b8a1d9',
+    '--card-bg': '#efe4fb',
+    '--text-color': '#3e0b6d',
   },
 }
 
@@ -110,7 +116,12 @@ setInterval(() => {
 <template>
   <v-app>
     <v-main>
-      <v-navigation-drawer app permanent width="250">
+      <v-navigation-drawer
+        app
+        permanent
+        width="250"
+        :style="{ backgroundColor: 'var(--navbar-bg)' }"
+      >
         <v-container class="text-center mt-4">
           <img :src="imgWel" alt="Welcome Icon" style="height: 100px; width: auto" />
           <h1 class="text-h5 font-weight-bold custom-title">Welcome Owner</h1>
@@ -176,7 +187,11 @@ setInterval(() => {
       <v-container fluid style="max-height: calc(100vh - 80px); overflow-y: auto">
         <v-row>
           <v-col cols="12" class="second-column-background">
-            <v-card class="pa-4" hover>
+            <v-card
+              class="pa-4"
+              hover
+              :style="{ backgroundColor: 'var(--card-bg)', color: 'var(--text-color)' }"
+            >
               <v-card-title class="text-h5 custom-title">Pet News and Facts</v-card-title>
               <v-divider></v-divider>
               <v-row>
@@ -197,7 +212,11 @@ setInterval(() => {
           </v-col>
         </v-row>
 
-        <v-card max-width="800" class="video-card mx-auto mt-5">
+        <v-card
+          max-width="800"
+          class="video-card mx-auto mt-5"
+          :style="{ backgroundColor: 'var(--card-bg)' }"
+        >
           <v-card-title class="text-h6">Watch Our Intro Video</v-card-title>
           <v-card-subtitle>
             <v-responsive aspect-ratio="16/9">
@@ -221,14 +240,8 @@ setInterval(() => {
 <style scoped>
 :root {
   --navbar-bg: #f5d5e0;
-}
-
-[data-theme='dark'] {
-  --navbar-bg: #210635;
-}
-
-[data-theme='custom'] {
-  --navbar-bg: #42od4b;
+  --card-bg: #ffffff;
+  --text-color: #000000;
 }
 
 .custom-title {
@@ -250,10 +263,6 @@ setInterval(() => {
   background-color: #efefef;
 }
 
-body {
-  font-family: 'Lora', serif;
-}
-
 .date-time-card {
   background-color: #ffcccb;
   border-radius: 10px;
@@ -265,7 +274,6 @@ body {
 }
 
 .video-card {
-  background-color: #f2e6fa;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 

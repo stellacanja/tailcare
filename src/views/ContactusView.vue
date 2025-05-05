@@ -99,6 +99,10 @@ const symptoms = [
         </v-container>
 
         <v-list dense>
+          <v-list-item to="/layout" component="RouterLink" class="menu-item">
+            <v-list-item-title>Profile</v-list-item-title>
+          </v-list-item>
+
           <v-list-item to="/doggo" component="RouterLink" class="menu-item">
             <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
@@ -127,10 +131,6 @@ const symptoms = [
           </v-list-item>
 
           <v-divider></v-divider>
-
-          <v-list-item @click="changeTheme" class="menu-item">
-            <v-list-item-title>Change Theme</v-list-item-title>
-          </v-list-item>
 
           <v-divider></v-divider>
 

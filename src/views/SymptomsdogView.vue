@@ -69,17 +69,17 @@ const symptoms = [
 
 const symptomIllnessMap = {
   'Lethargy (low energy)': ['Infection', 'Arthritis'],
-  'Vomiting': ['Parvovirus', 'Food Poisoning'],
-  'Diarrhea': ['Worms', 'Dietary Indiscretion'],
-  'Coughing': ['Kennel Cough', 'Heart Disease'],
-  'Sneezing': ['Allergies', 'Upper Respiratory Infection'],
+  Vomiting: ['Parvovirus', 'Food Poisoning'],
+  Diarrhea: ['Worms', 'Dietary Indiscretion'],
+  Coughing: ['Kennel Cough', 'Heart Disease'],
+  Sneezing: ['Allergies', 'Upper Respiratory Infection'],
   'Loss of appetite': ['Dental Problems', 'Gastrointestinal Disease'],
   'Weight loss': ['Cancer', 'Parasites'],
   'Difficulty breathing': ['Heartworm', 'Pneumonia'],
-  'Fever': ['Infection', 'Inflammation'],
+  Fever: ['Infection', 'Inflammation'],
   'Nasal discharge': ['Cold', 'Respiratory Infection'],
-  'Dehydration': ['Heatstroke', 'Kidney Disease'],
-  'Weakness': ['Anemia', 'Chronic Disease'],
+  Dehydration: ['Heatstroke', 'Kidney Disease'],
+  Weakness: ['Anemia', 'Chronic Disease'],
   'Abdominal pain': ['Bloating', 'Pancreatitis'],
   'Excessive drooling': ['Oral Injury', 'Toxin Exposure'],
   'Pale gums': ['Shock', 'Severe Anemia'],
@@ -98,7 +98,6 @@ watchEffect(() => {
 })
 </script>
 
-
 <template>
   <v-app>
     <v-main>
@@ -110,6 +109,10 @@ watchEffect(() => {
         </v-container>
 
         <v-list dense>
+          <v-list-item to="/layout" component="RouterLink" class="menu-item">
+            <v-list-item-title>Profile</v-list-item-title>
+          </v-list-item>
+
           <v-list-item to="/doggo" component="RouterLink" class="menu-item">
             <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
@@ -181,8 +184,8 @@ watchEffect(() => {
             </v-row>
           </v-col>
         </v-row>
-         <!-- New Illness Row -->
-         <v-row v-if="possibleIllnesses.length" class="mt-6 d-flex justify-center">
+        <!-- New Illness Row -->
+        <v-row v-if="possibleIllnesses.length" class="mt-6 d-flex justify-center">
           <v-col cols="12" md="8">
             <v-card class="symptom-card">
               <v-card-title class="symptom-title">Possible Illnesses</v-card-title>
